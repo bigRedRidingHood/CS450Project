@@ -284,6 +284,7 @@ public class Project {
   			case "1":
   				// View Tables
   				getConnection();
+  				
   				break;
   			case "2":
   				// Manipulate records
