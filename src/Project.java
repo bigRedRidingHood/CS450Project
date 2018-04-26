@@ -122,7 +122,7 @@ public class Project {
   }
 
   // Close the Connection
-  public void close(Connection connection) throws SQLException {
+  public static void close(Connection connection) throws SQLException {
     try
     {
       connection.close();
@@ -173,6 +173,8 @@ public class Project {
   				break;
   			case "4":
   				// Quit Program
+  				close(connection);
+  				System.out.println("Connection closed");
   				Quit = false;
   				break;
   			default:
