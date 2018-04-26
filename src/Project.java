@@ -1,22 +1,11 @@
 // JDBC libraries
+// JDBC Packages
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-// JDBC Packages
-import java.sql.*;
-import java.math.*;
-import java.io.*; 
-import oracle.jdbc.driver.*; 
-
-// JDK libraries
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Scanner;
 
 public class Project {
@@ -49,6 +38,7 @@ public class Project {
     private static String username;
     private static String password;
 
+    private static Connection connection;
     // Default Constructor
     public Project() {}
 
@@ -61,9 +51,11 @@ public class Project {
     	}
     
     	// Create a connection
-    	Connection connection = null;
+    	
     	try {
-    	  connection = DriverManager.getConnection (jdbc_url, username, password);
+    		
+    	  connection  = DriverManager.getConnection (jdbc_url, username, password);
+    	  System.out.println("Connection successful" + connection);
     	} catch (SQLException e) {
     	  e.printStackTrace();
     	}
@@ -87,12 +79,12 @@ public class Project {
 
 
   // Call our sql file that will create all the table
-  private void uploadTables(Connection connection) throws SQLException
+  private static void uploadTables() throws SQLException
   {
     // create the SQL for the table
     StringBuffer sbCreate = new StringBuffer();
     sbCreate.append("@Phase2.sql");
-    
+    System.out.println("Tables uploaded");
     // create the table
     Statement statement = null;
     try {
@@ -291,6 +283,7 @@ public class Project {
   		switch(option) {
   			case "1":
   				// View Tables
+  				getConnection();
   				break;
   			case "2":
   				// Manipulate records
