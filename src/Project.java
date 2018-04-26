@@ -42,6 +42,44 @@ public class Project {
     // Default Constructor
     public Project() {}
 
+    public static void main (String arg[]) throws SQLException, ClassNotFoundException {
+    	Scanner scan = new Scanner(System.in);
+    	System.out.println("Please Enter your credentials");
+    	System.out.print("Username: ");
+    	username = scan.nextLine();
+    	System.out.print("Password: ");
+    	password = scan.nextLine();
+    	boolean Quit = true;
+    	
+    	while(Quit) {
+    		menu();
+    		System.out.print("Please select an option. (1, 2, 3 or 4)\n-> ");
+    		String option;
+    		option = scan.nextLine();
+    		switch(option) {
+    			case "1":
+    				// View Tables
+    				getConnection();
+    				
+    				break;
+    			case "2":
+    				// Manipulate records
+    				break;
+    			case "3":
+    				// Search Database
+    				break;
+    			case "4":
+    				// Quit Program
+    				close(connection);
+    				System.out.println("Connection closed");
+    				Quit = false;
+    				break;
+    			default:
+    				System.out.println("Invalid input, please try again.");
+    		} // End Switch
+    	} // End Program Loop
+
+    } // End Main
     private static void getConnection() {
    		// register the JDBC driver
    		try {
@@ -145,43 +183,5 @@ public class Project {
   }
 
   // Main Function
-  public static void main (String arg[]) throws SQLException, ClassNotFoundException {
-  	Scanner scan = new Scanner(System.in);
-  	System.out.println("Please Enter your credentials");
-  	System.out.print("Username: ");
-  	username = scan.nextLine();
-  	System.out.print("Password: ");
-  	password = scan.nextLine();
-  	boolean Quit = true;
-  	
-  	while(Quit) {
-  		menu();
-  		System.out.print("Please select an option. (1, 2, 3 or 4)\n-> ");
-  		String option;
-  		option = scan.nextLine();
-  		switch(option) {
-  			case "1":
-  				// View Tables
-  				getConnection();
-  				
-  				break;
-  			case "2":
-  				// Manipulate records
-  				break;
-  			case "3":
-  				// Search Database
-  				break;
-  			case "4":
-  				// Quit Program
-  				close(connection);
-  				System.out.println("Connection closed");
-  				Quit = false;
-  				break;
-  			default:
-  				System.out.println("Invalid input, please try again.");
-  		} // End Switch
-  	} // End Program Loop
-
-  } // End Main
 
 }
