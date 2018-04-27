@@ -72,10 +72,10 @@ public class Project {
 		do {
 			System.out.println("Please choose from the following:");
 			System.out.println(
-					"\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel Rooms\n\t(4) Reservations\n\t(5) Room Types\n\t(6) Prhicing Information");
+					"\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel Rooms\n\t(4) Reservations\n\t(5) Room Types\n\t(6) Pricing Information\n\t(7) Rooms");
 			String in = scan.nextLine();
 			choice = Integer.parseInt(in);
-		} while (choice < 0 || choice >= 6);
+		} while (choice < 0 || choice > 7);
 
 		switch (choice) {
 		case 1:
@@ -90,6 +90,8 @@ public class Project {
 			getTuples(5);	break;
 		case 6:
 			getTuples(6);	break;
+		case 7:
+			getTuples(7);	break;
 		default:
 			break;
 		}
@@ -108,6 +110,7 @@ public class Project {
 			case 4: table="RESERVATIONS";break;
 			case 5: table="ROOM_TYPES";	break;
 			case 6: table="PRICING";		break;
+			case 7: table="ROOMS";		break;
 		}
 		//Limit 5 will limit the number of tuples to show.
 		String query="SELECT * FROM " + table + " LIMIT 5;";
