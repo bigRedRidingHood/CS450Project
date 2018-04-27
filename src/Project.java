@@ -8,6 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Project {
 
@@ -33,8 +37,10 @@ public class Project {
 		System.out.print("Password: ");
 		password = scan.nextLine();
 		boolean Quit = true;
-		 getConnection();
-		
+        getConnection();
+		uploadTables();
+		//uploadTuples();
+
 		while (Quit) {
 			menu();
 			System.out.print("Please select an option. (1, 2, 3 or 4)\n-> ");
@@ -62,7 +68,7 @@ public class Project {
 				System.out.println("Invalid input, please try again.");
 			} // End Switch
 		} // End Program Loop
-		 close(connection);
+		 close();
 	} // End Main
 
 	private static void getTables() {
@@ -165,6 +171,8 @@ public class Project {
 //		System.out.println("The selected query is:\n\t" + query);
 		
 	}
+
+	// Make connection with DB
 	private static void getConnection() {
 		// register the JDBC driver
 		try {
@@ -203,23 +211,43 @@ public class Project {
 	// Call our sql file that will create all the table
 	private static void uploadTables() throws SQLException {
 		// create the SQL for the table
+
 		StringBuffer sbCreate = new StringBuffer();
-		sbCreate.append("@Phase2.sql");
-		System.out.println("Tables uploaded");
+
+        try {
+            File file = new File("src/Phase2.sql");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            System.out.println("Read from file " + file);
+            while ((line = bufferedReader.readLine()) != null) {
+                sbCreate.append(line);
+                sbCreate.append("\n");
+            }
+            fileReader.close();
+        } catch (IOException e) {
+            System.out.println("uploadTables Exception here.");
+            e.printStackTrace();
+        }
+
 		// create the table
 		Statement statement = null;
 		try {
 			statement = connection.createStatement();
+			//System.out.println(sbCreate.toString());
 			statement.executeUpdate(sbCreate.toString());
-		} catch (SQLException e) {
+            System.out.println("Tables uploaded");
+		}
+		catch (SQLException e) {
 			throw e;
-		} finally {
+		}
+		finally {
 			statement.close();
 		}
 	}
 
 	// Call our sql file that will insert tuples
-	private void uploadTuples(Connection connection) throws SQLException {
+	private static void uploadTuples() throws SQLException {
 		// create the SQL for the table
 		StringBuffer sbCreate = new StringBuffer();
 		sbCreate.append("@Phase2_Test_Data.sql");
@@ -242,9 +270,10 @@ public class Project {
 	}
 
 	// Close the Connection
-	public static void close(Connection connection) throws SQLException {
+	public static void close() throws SQLException {
 		try {
 			connection.close();
+			System.out.println("close connection");
 		} catch (SQLException e) {
 			throw e;
 		}
