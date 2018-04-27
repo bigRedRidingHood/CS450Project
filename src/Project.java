@@ -33,7 +33,8 @@ public class Project {
 		System.out.print("Password: ");
 		password = scan.nextLine();
 		boolean Quit = true;
-		// getConnection();
+		 getConnection();
+		
 		while (Quit) {
 			menu();
 			System.out.print("Please select an option. (1, 2, 3 or 4)\n-> ");
@@ -61,7 +62,7 @@ public class Project {
 				System.out.println("Invalid input, please try again.");
 			} // End Switch
 		} // End Program Loop
-		// close(connection);
+		 close(connection);
 	} // End Main
 
 	private static void getTables() {
@@ -97,7 +98,7 @@ public class Project {
 		}
 		System.out.println("Returning to main menu\n");
 	}
-
+//****** HEY MICHAEL COME HERE AND WORK ON THIS, DO RESERVATION & PRICE_INFO TABLES
 	private static void getTuples(int tableNumber) {
 //		System.out.println("tableNumber: " + tableNumber);
 		
@@ -113,7 +114,7 @@ public class Project {
 			case 7: table="ROOMS";		break;
 		}
 		//Limit 5 will limit the number of tuples to show.
-		String query="SELECT * FROM " + table + " LIMIT 5;";
+		String query="SELECT * FROM " + table + " WHERE ROWNUM < 6";
 		
 		System.out.println("\tDisplay full list?\n\t\t(1) Yes.\n\t\t(2) No.");
 		int c = Integer.parseInt(scan.nextLine());
@@ -123,13 +124,44 @@ public class Project {
 			}while(c!=1 || c!=2);
 		
 		if(c==1) 
-			query = "SELECT * FROM " + table + ";"; 
+			query = "SELECT * FROM " + table; 
 		//TODO: Code to execute query
+		 
+		try {
+			Statement st = connection.createStatement();
+			if(tableNumber == 1) {
+				ResultSet rs = st.executeQuery(query);
+				while (rs.next()) {
+					String CID = rs.getString("C_ID");
+					String name = rs.getString("C_NAME");
+					int age = rs.getInt("AGE");
+					String gender = rs.getString("GENDER");
+	
+					System.out.printf("| %10s | %10s | %10d | %10s |\n", CID, name, age, gender);
+				}
+			}
+			else if(tableNumber == 2) {
+				ResultSet rs = st.executeQuery(query);
+				while (rs.next()) {
+					int b_ID = rs.getInt("Branch_ID");
+					String hotelName = rs.getString("H_Name");
+					String city = rs.getString("City");
+					String Street_Name = rs.getString("Street_Name");
+					int Street_Num = rs.getInt("Street_Num");
+//					long number = rs.getLong("Phone_Number");
+					//TODO: Fix the sql to reflect Phone_Number to a string or an Int
+			
+					System.out.printf("| %10s | %6d | %6d %15s %10s |\n", hotelName, b_ID, Street_Num, Street_Name,city);
+				}
+			}
+		} catch (Exception e) {
+			 System.err.println("Got an exception! ");
+		     System.err.println(e.getMessage());
+		 }
 		
-		System.out.println("The selected query is:\n\t" + query);
+//		System.out.println("The selected query is:\n\t" + query);
 		
 	}
-
 	private static void getConnection() {
 		// register the JDBC driver
 		try {
