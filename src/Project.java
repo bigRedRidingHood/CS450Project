@@ -98,10 +98,12 @@ public class Project {
 		}
 		System.out.println("Returning to main menu\n");
 	}
+
 //****** HEY MICHAEL COME HERE AND WORK ON THIS, DO RESERVATION & PRICE_INFO TABLES
-	private static void getTuples(int tableNumber) {
+
+	private static void getTuples(int tableNumber) /*throws SQLException */ {
 //		System.out.println("tableNumber: " + tableNumber);
-		
+
 		Scanner scan = new Scanner(System.in);
 		String table = "";
 		switch (tableNumber) {
@@ -114,14 +116,16 @@ public class Project {
 			case 7: table="ROOMS";		break;
 		}
 		//Limit 5 will limit the number of tuples to show.
+
 		String query="SELECT * FROM " + table + " WHERE ROWNUM < 6";
-		
+
 		System.out.println("\tDisplay full list?\n\t\t(1) Yes.\n\t\t(2) No.");
 		int c = Integer.parseInt(scan.nextLine());
-		if(c < 1 || c>2) 
+		if(c < 1 || c>2)
 			do {
 				System.out.println("Please select either Yes (1) or No (2)");
 			}while(c!=1 || c!=2);
+
 		
 		if(c==1) 
 			query = "SELECT * FROM " + table; 
@@ -179,7 +183,7 @@ public class Project {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		// return connection;
+		return connection;
 	}
 
 	// Method to check if a table exists
