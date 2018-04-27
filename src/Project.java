@@ -98,9 +98,9 @@ public class Project {
 		System.out.println("Returning to main menu\n");
 	}
 
-	private static void getTuples(int tableNumber) {
+	private static void getTuples(int tableNumber) /*throws SQLException */ {
 //		System.out.println("tableNumber: " + tableNumber);
-		
+
 		Scanner scan = new Scanner(System.in);
 		String table = "";
 		switch (tableNumber) {
@@ -114,23 +114,49 @@ public class Project {
 		}
 		//Limit 5 will limit the number of tuples to show.
 		String query="SELECT * FROM " + table + " LIMIT 5;";
-		
+
 		System.out.println("\tDisplay full list?\n\t\t(1) Yes.\n\t\t(2) No.");
 		int c = Integer.parseInt(scan.nextLine());
-		if(c < 1 || c>2) 
+		if(c < 1 || c>2)
 			do {
 				System.out.println("Please select either Yes (1) or No (2)");
 			}while(c!=1 || c!=2);
-		
-		if(c==1) 
-			query = "SELECT * FROM " + table + ";"; 
-		//TODO: Code to execute query
-		
+
+		if(c==1) {
+			query = "SELECT * FROM " + table + ";";
+			/*TODO: Code to execute query
+			NEEDS TO BE DEBUGGED
+			Connection connection = getConnection();
+			try {
+				executeQuery(connection, query);
+			} catch (SQLException e) {
+				throw e;
+			} */
+		}
+
 		System.out.println("The selected query is:\n\t" + query);
-		
+
 	}
 
-	private static void getConnection() {
+	private static void	executeQuery(Connection connection, String query) throws SQLException {
+		// create the SQL for the table
+		StringBuffer sbCreate = new StringBuffer();
+		sbCreate.append(query);
+
+		// create the table
+		Statement statement = null;
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate (sbCreate.toString());
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			statement.close();
+		}
+	}
+
+	// Setup Connection with DB
+	private static Connection getConnection() {
 		// register the JDBC driver
 		try {
 			Class.forName(driver);
@@ -147,7 +173,7 @@ public class Project {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		// return connection;
+		return connection;
 	}
 
 	// Method to check if a table exists
