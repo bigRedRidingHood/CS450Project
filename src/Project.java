@@ -112,9 +112,9 @@ public class Project {
 		//Limit 5 will limit the number of tuples to show.
 		String query="SELECT * FROM " + table + " LIMIT 5;";
 		
-		System.out.println("Display full list?\n\t\t(1) Yes.\n\t\t(2) No.");
+		System.out.println("\tDisplay full list?\n\t\t(1) Yes.\n\t\t(2) No.");
 		int c = Integer.parseInt(scan.nextLine());
-		if(c != 1 || c!= 2) 
+		if(c < 1 || c>2) 
 			do {
 				System.out.println("Please select either Yes (1) or No (2)");
 			}while(c!=1 || c!=2);
