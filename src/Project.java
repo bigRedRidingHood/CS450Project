@@ -152,10 +152,9 @@ public class Project {
 					String city = rs.getString("City");
 					String Street_Name = rs.getString("Street_Name");
 					int Street_Num = rs.getInt("Street_Num");
-//					long number = rs.getLong("Phone_Number");
-					//TODO: Fix the sql to reflect Phone_Number to a string or an Int
-			
-					System.out.printf("| %10s | %6d | %6d %15s %10s |\n", hotelName, b_ID, Street_Num, Street_Name,city);
+					String number = rs.getString("Phone_Number");
+
+					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
 				}
 			}
 		} catch (Exception e) {
@@ -183,7 +182,7 @@ public class Project {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return connection;
+		//return connection;
 	}
 
 	// Method to check if a table exists
