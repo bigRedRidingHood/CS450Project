@@ -123,6 +123,8 @@ public class Project {
 			query = "SELECT * FROM " + table + ";"; 
 		//TODO: Code to execute query
 		
+		System.out.println("The selected query is:\n\t" + query);
+		
 	}
 
 	private static void getConnection() {
