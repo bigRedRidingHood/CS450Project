@@ -138,22 +138,22 @@ public class Project {
 
 	}
 
-	private static void	executeQuery(Connection connection, String query) throws SQLException {
-		// create the SQL for the table
-		StringBuffer sbCreate = new StringBuffer();
-		sbCreate.append(query);
-
-		// create the table
-		Statement statement = null;
-		try {
-			statement = connection.createStatement();
-			statement.executeUpdate (sbCreate.toString());
-		} catch (SQLException e) {
-			throw e;
-		} finally {
-			statement.close();
-		}
-	}
+//	private static void	executeQuery(Connection connection, String query) throws SQLException {
+//		// create the SQL for the table
+//		StringBuffer sbCreate = new StringBuffer();
+//		sbCreate.append(query);
+//
+//		// create the table
+//		Statement statement = null;
+//		try {
+//			statement = connection.createStatement();
+//			statement.executeUpdate (sbCreate.toString());
+//		} catch (SQLException e) {
+//			throw e;
+//		} finally {
+//			statement.close();
+//		}
+//	}
 
 	// Setup Connection with DB
 	private static Connection getConnection() {
