@@ -11,26 +11,6 @@ import java.util.Scanner;
 public class Project {
 
 	// Instance Variables
-	private int B_ID;
-	private int Street_Num;
-	private int Phone_Num;
-	private int Capacity;
-	private int Price;
-	private int Age;
-	private int Date_Day;
-	private int Date_Month;
-	private int Date_Year;
-	private int Reservation_Num;
-	private int Party_Size;
-	private int Quantity;
-	private String Gender;
-	private String C_ID;
-	private String C_Name;
-	private String Room_Type; 
-	private String Hotel_Name;
-	private String City;
-	private String Street_Name;
-	private String State;
 
     // DB connection properties
     private static String driver = "oracle.jdbc.driver.OracleDriver";
@@ -50,7 +30,7 @@ public class Project {
     	System.out.print("Password: ");
     	password = scan.nextLine();
     	boolean Quit = true;
-    	
+//    	getConnection();
     	while(Quit) {
     		menu();
     		System.out.print("Please select an option. (1, 2, 3 or 4)\n-> ");
@@ -59,8 +39,8 @@ public class Project {
     		switch(option) {
     			case "1":
     				// View Tables
-    				getConnection();
     				
+    				getTables();
     				break;
     			case "2":
     				// Manipulate records
@@ -70,7 +50,7 @@ public class Project {
     				break;
     			case "4":
     				// Quit Program
-    				close(connection);
+    				
     				System.out.println("Connection closed");
     				Quit = false;
     				break;
@@ -78,8 +58,45 @@ public class Project {
     				System.out.println("Invalid input, please try again.");
     		} // End Switch
     	} // End Program Loop
-
+//    	close(connection);
     } // End Main
+    
+    
+    private static void getTables() {
+    		Scanner scan = new Scanner(System.in);
+    		int choice = 0;
+    	//Customer, Hotel, Room, Hotel_Room, Reservation, Room_Type, Price_Info
+    		System.out.println("Select the table you wish to view");
+    		do {
+    			System.out.println("Please choose from the following:" );
+    		System.out.println("\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel Rooms\n\t(4) Reservations\n\t(5) Room Types\n\t(6) Prhicing Information");
+    		String in = scan.nextLine();
+    		choice = Integer.parseInt(in);
+    }while(choice<0 || choice >=6);
+    		
+    		switch(choice) {
+    		case 1:
+    			getTuples(1); break;
+    		case 2:
+    			getTuples(2); break;
+    		case 3:
+    			getTuples(3); break;
+    		case 4:
+    			getTuples(4); break;
+    		case 5:
+    			getTuples(5); break;
+    		case 6:
+    			getTuples(6); break;
+    			default: 
+    				break;
+    		}
+    		System.out.println("Returning to main menu\n");
+    }
+    
+    private static void getTuples(int tableNumber) {
+    		System.out.println("tableNumber: " + tableNumber);
+    		
+    }
     private static void getConnection() {
    		// register the JDBC driver
    		try {
@@ -93,7 +110,7 @@ public class Project {
     	try {
     		
     	  connection  = DriverManager.getConnection (jdbc_url, username, password);
-    	  System.out.println("Connection successful" + connection);
+    	  System.out.println("Connection successful");
     	} catch (SQLException e) {
     	  e.printStackTrace();
     	}
