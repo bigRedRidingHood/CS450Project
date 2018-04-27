@@ -212,7 +212,9 @@ public class Project {
 	private static void uploadTables() throws SQLException {
 		// create the SQL for the table
 
-		StringBuffer sbCreate = new StringBuffer();
+		//StringBuffer sbCreate = new StringBuffer();
+		Statement statement = null;
+		statement = connection.createStatement();
 
         try {
             File file = new File("src/Phase2.sql");
@@ -221,8 +223,10 @@ public class Project {
             String line;
             System.out.println("Read from file " + file);
             while ((line = bufferedReader.readLine()) != null) {
-                sbCreate.append(line);
-                sbCreate.append("\n");
+				StringBuffer sbCreate = new StringBuffer();
+                sbCreate.append(line.toString().replace(';',' '));
+                //sbCreate.append("\n");
+				statement.executeUpdate(sbCreate.toString());
             }
             fileReader.close();
         } catch (IOException e) {
@@ -231,13 +235,13 @@ public class Project {
         }
 
 		// create the table
-		Statement statement = null;
-		try {
-			statement = connection.createStatement();
-			//System.out.println(sbCreate.toString());
-			statement.executeUpdate(sbCreate.toString());
-            System.out.println("Tables uploaded");
-		}
+//		Statement statement = null;
+//		try {
+//			statement = connection.createStatement();
+//			//System.out.println(sbCreate.toString());
+//			statement.executeUpdate(sbCreate.toString());
+//            System.out.println("Tables uploaded");
+//		}
 		catch (SQLException e) {
 			throw e;
 		}
