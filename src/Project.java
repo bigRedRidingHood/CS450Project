@@ -15,8 +15,6 @@ import java.io.IOException;
 
 public class Project {
 
-	// Instance Variables
-
 	// DB connection properties
 	private static String driver = "oracle.jdbc.driver.OracleDriver";
 	private static String jdbc_url = "jdbc:oracle:thin:@apollo.vse.gmu.edu:1521:ite10g";
@@ -29,13 +27,16 @@ public class Project {
 	public Project() {
 	}
 
+	// TODO: make password invisible when logging in if we have time
+    // TODO: manipulate records, ie. add, delete, edit?
+    // TODO: search database, ie. find reservations and other basic searches
 	public static void main(String arg[]) throws SQLException, ClassNotFoundException {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Please Enter your credentials");
 		System.out.print("Username: ");
 		username = scan.nextLine();
-		System.out.print("Password: ");
-		password = scan.nextLine();
+        System.out.print("Password: ");
+        password = scan.nextLine();
 		boolean Quit = true;
         getConnection();
 		uploadTables();
@@ -69,6 +70,8 @@ public class Project {
 		 close();
 	} // End Main
 
+    // Select tables for viewing
+    // FUNCTION COMPLETE
 	private static void getTables() {
 		Scanner scan = new Scanner(System.in);
 		int choice = 0;
@@ -103,8 +106,8 @@ public class Project {
 		System.out.println("Returning to main menu\n");
 	}
 
-//****** HEY MICHAEL COME HERE AND WORK ON THIS, DO RESERVATION & PRICE_INFO TABLES
-
+	// View table tuples
+    // FUNCTION COMPLETE
 	private static void getTuples(int tableNumber) /*throws SQLException */ {
 //		System.out.println("tableNumber: " + tableNumber);
 
@@ -133,8 +136,7 @@ public class Project {
 		
 		if(c==1) 
 			query = "SELECT * FROM " + table; 
-		//TODO: Code to execute query
-		 
+
 		try {
 			Statement st = connection.createStatement();
 			System.out.println(table + " Table:");
@@ -369,4 +371,4 @@ public class Project {
 		System.out.println("(4) Quit");
 	}
 
-}
+} // End Project
