@@ -50,10 +50,11 @@ public class Project {
 			switch (option) {
 			case "1":
 				// View Tables
-				getTables();
+				getTables(option);
 				break;
 			case "2":
 				// Manipulate records
+				getTables(option);
 				break;
 			case "3":
 				// Search Database
@@ -72,44 +73,125 @@ public class Project {
 
     // Select tables for viewing
     // FUNCTION COMPLETE
-	private static void getTables() {
-		Scanner scan = new Scanner(System.in);
-		int choice = 0;
-		// Customer, Hotel, Room, Hotel_Room, Reservation, Room_Type, Price_Info
-		System.out.println("Select the table you wish to view");
-		do {
-			System.out.println("Please choose from the following:");
-			System.out.println(
-					"\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel Rooms\n\t(4) Reservations\n\t(5) Pricing Information\n\t(6) Rooms");
-			String in = scan.nextLine();
-			choice = Integer.parseInt(in);
-		} while (choice < 0 || choice > 7);
+	private static void getTables(String prevOp) throws SQLException {
+		if(prevOp.equals("1")) {
+			Scanner scan = new Scanner(System.in);
+			int choice = 0;
+			System.out.println("Select the table you wish to view");
+			do {
+				System.out.println("Please choose from the following:");
+				System.out.println(
+						"\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel Rooms\n\t(4) Reservations\n\t(5) Pricing Information\n\t(6) Rooms");
+				System.out.print("-> ");
+				String in = scan.nextLine();
+				choice = Integer.parseInt(in);
+			} while (choice < 0 || choice > 6);
 
-		switch (choice) {
-		case 1:
-			getTuples(1);	break;
-		case 2:
-			getTuples(2);	break;
-		case 3:
-			getTuples(3);	break;
-		case 4:
-			getTuples(4);	break;
-		case 5:
-			getTuples(5);	break;
-		case 6:
-			getTuples(6);	break;
-		//case 7:
-		//	getTuples(7);	break;
-		default:
-			break;
+			switch (choice) {
+				case 1:
+					getTuples(1);
+					break;
+				case 2:
+					getTuples(2);
+					break;
+				case 3:
+					getTuples(3);
+					break;
+				case 4:
+					getTuples(4);
+					break;
+				case 5:
+					getTuples(5);
+					break;
+				case 6:
+					getTuples(6);
+					break;
+				default:
+					break;
+			}
+			System.out.println("Returning to main menu\n");
 		}
-		System.out.println("Returning to main menu\n");
-	}
+
+		else if(prevOp.equals("2")) {
+			Scanner scan = new Scanner(System.in);
+			int in = 0;
+			do {
+				manipMenu();
+				System.out.println("\nPlease select an option. (1, 2, 3, or 4)");
+				System.out.print("-> ");
+				String input = scan.nextLine();
+				in = Integer.parseInt(input);
+			} while (in < 0 || in > 4);
+
+			switch (in) {
+				case 1:
+					manipData(1); // Add Table
+					break;
+				case 2:
+					manipData(2); // Add Tuples
+					break;
+				case 3:
+					manipData(3); // Delete Tuple
+					break;
+				case 4:
+					manipData(4); // Update Tuple
+					break;
+				default:
+					break;
+			}
+		}
+	} // End getTables
+
+	// Function for the user to manipulate data in the DB
+	//TODO: Implement this function for user to manipulate data
+	public static void manipData(int tableNumber) throws SQLException {
+		Scanner scan = new Scanner(System.in);
+		String queryType = "";
+		if(tableNumber == 1) {
+
+		}
+		else if(tableNumber == 2) {
+
+		}
+		// Remove Tuple
+		// TODO: need to cascade contraints upon removal of certain tuples
+		else if(tableNumber == 3) {
+			System.out.print("Delete tuple from what table?\n-> ");
+			String table = scan.nextLine();
+			System.out.print("Delete tuple by what attribute?\n-> ");
+			String att = scan.nextLine();
+			System.out.print("Delete " + att + " that equals?\n-> ");
+			String info = scan.nextLine();
+
+			Statement statement = null;
+			statement = connection.createStatement();
+			try {
+				StringBuffer sbCascade = new StringBuffer();
+				sbCascade.append("ON DELETE CASCADE");
+				statement.executeUpdate(sbCascade.toString());
+
+				StringBuffer sbCreate = new StringBuffer();
+				sbCreate.append("Delete from " + table + " Where " + att + " = '" + info + "'");
+				statement.executeUpdate(sbCreate.toString());
+			}catch (SQLException e) {
+				throw e;
+			}
+			finally {
+				statement.close();
+			}
+
+		}
+		else if(tableNumber == 4) {
+
+		}
+
+	} // End manipData
+
+
 
 	// View table tuples
     // FUNCTION COMPLETE
-	private static void getTuples(int tableNumber) /*throws SQLException */ {
-//		System.out.println("tableNumber: " + tableNumber);
+	private static void getTuples(int tableNumber)  {
 
 		Scanner scan = new Scanner(System.in);
 		String table = "";
@@ -118,7 +200,6 @@ public class Project {
 			case 2: table="HOTEL";		break;
 			case 3: table="HOTEL_ROOM";	break;
 			case 4: table="RESERVATION";break;
-			//case 5: table="ROOM_TYPE";	break;
 			case 5: table="PRICE_INFO";	break;
 			case 6: table="ROOM";		break;
 		}
@@ -234,10 +315,7 @@ public class Project {
 			 System.err.println("Got an exception! ");
 		     System.err.println(e.getMessage());
 		 }
-		
-//		System.out.println("The selected query is:\n\t" + query);
-		
-	}
+	} // End getTuples
 
 	// Make connection with DB
 	// FUNCTION COMPLETE
@@ -280,8 +358,6 @@ public class Project {
 	// FUNCTION COMPLETE
 	private static void uploadTables() throws SQLException {
 		// create the SQL for the table
-
-		//StringBuffer sbCreate = new StringBuffer();
 		Statement statement = null;
 		statement = connection.createStatement();
 
@@ -294,7 +370,6 @@ public class Project {
             while ((line = bufferedReader.readLine()) != null) {
 				StringBuffer sbCreate = new StringBuffer();
                 sbCreate.append(line.toString().replace(';',' '));
-                //sbCreate.append("\n");
 				statement.executeUpdate(sbCreate.toString());
             }
             fileReader.close();
@@ -303,14 +378,6 @@ public class Project {
             e.printStackTrace();
         }
 
-		// create the table
-//		Statement statement = null;
-//		try {
-//			statement = connection.createStatement();
-//			//System.out.println(sbCreate.toString());
-//			statement.executeUpdate(sbCreate.toString());
-//            System.out.println("Tables uploaded");
-//		}
 		catch (SQLException e) {
 			throw e;
 		}
@@ -335,7 +402,6 @@ public class Project {
 			while ((line = bufferedReader.readLine()) != null) {
 				StringBuffer sbCreate = new StringBuffer();
 				sbCreate.append(line.toString().replace(';',' '));
-				//sbCreate.append("\n");
 				statement.executeUpdate(sbCreate.toString());
 			}
 			fileReader.close();
@@ -343,12 +409,6 @@ public class Project {
 			System.out.println("uploadTables Exception here.");
 			e.printStackTrace();
 		}
-	}
-
-	// Function for the user to insert data into the DB
-	//TODO: Implement this function for user to insert data
-	public void insertData() {
-
 	}
 
 	// Close the Connection
@@ -362,13 +422,22 @@ public class Project {
 		}
 	}
 
-	// Print the menu for the user
+	// Print the main menu for the user
 	// FUNCTION COMPLETE
 	public static void menu() {
 		System.out.println("\n(1) View Content");
 		System.out.println("(2) Manipulate Records");
 		System.out.println("(3) Search Database");
 		System.out.println("(4) Quit");
+	}
+
+	// Print the menu for manipulating tables
+	// FUNCTION COMPLETE
+	public static void manipMenu() {
+		System.out.println("\n(1) Add Table");
+		System.out.println("(2) Add Tuple");
+		System.out.println("(3) Remove Tuple");
+		System.out.println("(4) Update Tuple");
 	}
 
 } // End Project
