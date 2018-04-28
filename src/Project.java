@@ -39,7 +39,7 @@ public class Project {
 		boolean Quit = true;
         getConnection();
 		uploadTables();
-		//uploadTuples();
+		uploadTuples();
 
 		while (Quit) {
 			menu();
@@ -49,7 +49,6 @@ public class Project {
 			switch (option) {
 			case "1":
 				// View Tables
-
 				getTables();
 				break;
 			case "2":
@@ -60,7 +59,6 @@ public class Project {
 				break;
 			case "4":
 				// Quit Program
-
 				System.out.println("Connection closed");
 				Quit = false;
 				break;
@@ -139,7 +137,9 @@ public class Project {
 		 
 		try {
 			Statement st = connection.createStatement();
+			System.out.println(table + " Table:");
 			if(tableNumber == 1) {
+				System.out.printf("%s  %15s  %8s  %15s \n", "CID", "C_Name", "Age", "Gender");
 				ResultSet rs = st.executeQuery(query);
 				while (rs.next()) {
 					String CID = rs.getString("C_ID");
@@ -151,6 +151,7 @@ public class Project {
 				}
 			}
 			else if(tableNumber == 2) {
+				System.out.printf("%s %7s %14s %12s %6s %17s\n", "Hotel_Name", "B_ID", "Street_Num", "Street_Name", "City", "Phone_Number");
 				ResultSet rs = st.executeQuery(query);
 				while (rs.next()) {
 					int b_ID = rs.getInt("Branch_ID");
@@ -163,6 +164,75 @@ public class Project {
 					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
 				}
 			}
+//			else if(tableNumber == 3) {
+//				System.out.printf("%s %10s, %10s, %10s\n", "Branch_ID", "Hotel_Name", "Room_Type", "Quantity");
+//				ResultSet rs = st.executeQuery(query);
+//				while (rs.next()) {
+//					int b_ID = rs.getInt("Branch_ID");
+//					String hotelName = rs.getString("H_Name");
+//					String room_t = rs.getString("R_Type");
+//					int quantity = rs.getInt("Quantity");
+//
+//					System.out.printf("| %10s | %6d | %8s | %5d|\n", hotelName, b_ID, room_t, quantity);
+//				}
+//			}
+//			else if(tableNumber == 4) {
+//				System.out.printf();
+//				ResultSet rs = st.executeQuery(query);
+//				while (rs.next()) {
+//					int b_ID = rs.getInt("Branch_ID");
+//					String hotelName = rs.getString("H_Name");
+//					String city = rs.getString("City");
+//					String Street_Name = rs.getString("Street_Name");
+//					int Street_Num = rs.getInt("Street_Num");
+//					String number = rs.getString("Phone_Number");
+//
+//					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
+//				}
+//			}
+//			else if(tableNumber == 5) {
+//				System.out.printf();
+//				ResultSet rs = st.executeQuery(query);
+//				while (rs.next()) {
+//					int b_ID = rs.getInt("Branch_ID");
+//					String hotelName = rs.getString("H_Name");
+//					String city = rs.getString("City");
+//					String Street_Name = rs.getString("Street_Name");
+//					int Street_Num = rs.getInt("Street_Num");
+//					String number = rs.getString("Phone_Number");
+//
+//					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
+//				}
+//			}
+//			else if(tableNumber == 6) {
+//				System.out.printf();
+//				ResultSet rs = st.executeQuery(query);
+//				while (rs.next()) {
+//					int b_ID = rs.getInt("Branch_ID");
+//					String hotelName = rs.getString("H_Name");
+//					String city = rs.getString("City");
+//					String Street_Name = rs.getString("Street_Name");
+//					int Street_Num = rs.getInt("Street_Num");
+//					String number = rs.getString("Phone_Number");
+//
+//					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
+//				}
+//			}
+//			else if(tableNumber == 7) {
+//				System.out.printf();
+//				ResultSet rs = st.executeQuery(query);
+//				while (rs.next()) {
+//					int b_ID = rs.getInt("Branch_ID");
+//					String hotelName = rs.getString("H_Name");
+//					String city = rs.getString("City");
+//					String Street_Name = rs.getString("Street_Name");
+//					int Street_Num = rs.getInt("Street_Num");
+//					String number = rs.getString("Phone_Number");
+//
+//					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
+//				}
+//			}
+
 		} catch (Exception e) {
 			 System.err.println("Got an exception! ");
 		     System.err.println(e.getMessage());
@@ -173,6 +243,7 @@ public class Project {
 	}
 
 	// Make connection with DB
+	// FUNCTION COMPLETE
 	private static void getConnection() {
 		// register the JDBC driver
 		try {
@@ -209,6 +280,7 @@ public class Project {
 	}
 
 	// Call our sql file that will create all the table
+	// FUNCTION COMPLETE
 	private static void uploadTables() throws SQLException {
 		// create the SQL for the table
 
@@ -251,29 +323,39 @@ public class Project {
 	}
 
 	// Call our sql file that will insert tuples
+	// FUNCTION COMPLETE
 	private static void uploadTuples() throws SQLException {
 		// create the SQL for the table
-		StringBuffer sbCreate = new StringBuffer();
-		sbCreate.append("@Phase2_Test_Data.sql");
-
-		// create the table
 		Statement statement = null;
+		statement = connection.createStatement();
+
 		try {
-			statement = connection.createStatement();
-			statement.executeUpdate(sbCreate.toString());
-		} catch (SQLException e) {
-			throw e;
-		} finally {
-			statement.close();
+			File file = new File("src/Phase2_Test_Data.sql");
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String line;
+			System.out.println("Load from file " + file);
+			while ((line = bufferedReader.readLine()) != null) {
+				StringBuffer sbCreate = new StringBuffer();
+				sbCreate.append(line.toString().replace(';',' '));
+				//sbCreate.append("\n");
+				statement.executeUpdate(sbCreate.toString());
+			}
+			fileReader.close();
+		} catch (IOException e) {
+			System.out.println("uploadTables Exception here.");
+			e.printStackTrace();
 		}
 	}
 
 	// Function for the user to insert data into the DB
+	//TODO: Implement this function for user to insert data
 	public void insertData() {
 
 	}
 
 	// Close the Connection
+	// FUNCTION COMPLETE
 	public static void close() throws SQLException {
 		try {
 			connection.close();
@@ -283,16 +365,13 @@ public class Project {
 		}
 	}
 
-	// Setter Methods
-
 	// Print the menu for the user
+	// FUNCTION COMPLETE
 	public static void menu() {
 		System.out.println("\n(1) View Content");
 		System.out.println("(2) Manipulate Records");
 		System.out.println("(3) Search Database");
 		System.out.println("(4) Quit");
 	}
-
-	// Main Function
 
 }
