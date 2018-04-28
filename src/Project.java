@@ -77,7 +77,7 @@ public class Project {
 		do {
 			System.out.println("Please choose from the following:");
 			System.out.println(
-					"\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel Rooms\n\t(4) Reservations\n\t(5) Room Types\n\t(6) Pricing Information\n\t(7) Rooms");
+					"\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel Rooms\n\t(4) Reservations\n\t(5) Pricing Information\n\t(6) Rooms");
 			String in = scan.nextLine();
 			choice = Integer.parseInt(in);
 		} while (choice < 0 || choice > 7);
@@ -95,8 +95,8 @@ public class Project {
 			getTuples(5);	break;
 		case 6:
 			getTuples(6);	break;
-		case 7:
-			getTuples(7);	break;
+		//case 7:
+		//	getTuples(7);	break;
 		default:
 			break;
 		}
@@ -113,11 +113,11 @@ public class Project {
 		switch (tableNumber) {
 			case 1: table="CUSTOMER"; 	break;
 			case 2: table="HOTEL";		break;
-			case 3: table="HOTEL_ROOMS";	break;
-			case 4: table="RESERVATIONS";break;
-			case 5: table="ROOM_TYPES";	break;
-			case 6: table="PRICING";		break;
-			case 7: table="ROOMS";		break;
+			case 3: table="HOTEL_ROOM";	break;
+			case 4: table="RESERVATION";break;
+			//case 5: table="ROOM_TYPE";	break;
+			case 5: table="PRICE_INFO";	break;
+			case 6: table="ROOM";		break;
 		}
 		//Limit 5 will limit the number of tuples to show.
 
@@ -139,7 +139,7 @@ public class Project {
 			Statement st = connection.createStatement();
 			System.out.println(table + " Table:");
 			if(tableNumber == 1) {
-				System.out.printf("%s  %15s  %8s  %15s \n", "CID", "C_Name", "Age", "Gender");
+				System.out.printf(" %s  %14s  %8s  %14s \n", "CID", "C_Name", "Age", "Gender");
 				ResultSet rs = st.executeQuery(query);
 				while (rs.next()) {
 					String CID = rs.getString("C_ID");
@@ -151,7 +151,7 @@ public class Project {
 				}
 			}
 			else if(tableNumber == 2) {
-				System.out.printf("%s %7s %14s %12s %6s %17s\n", "Hotel_Name", "B_ID", "Street_Num", "Street_Name", "City", "Phone_Number");
+				System.out.printf(" %s %6s %11s %40s\n", "Hotel_Name", "B_ID", "Address", "Phone_Number");
 				ResultSet rs = st.executeQuery(query);
 				while (rs.next()) {
 					int b_ID = rs.getInt("Branch_ID");
@@ -164,74 +164,69 @@ public class Project {
 					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
 				}
 			}
-//			else if(tableNumber == 3) {
-//				System.out.printf("%s %10s, %10s, %10s\n", "Branch_ID", "Hotel_Name", "Room_Type", "Quantity");
-//				ResultSet rs = st.executeQuery(query);
-//				while (rs.next()) {
-//					int b_ID = rs.getInt("Branch_ID");
-//					String hotelName = rs.getString("H_Name");
-//					String room_t = rs.getString("R_Type");
-//					int quantity = rs.getInt("Quantity");
-//
-//					System.out.printf("| %10s | %6d | %8s | %5d|\n", hotelName, b_ID, room_t, quantity);
-//				}
-//			}
-//			else if(tableNumber == 4) {
-//				System.out.printf();
-//				ResultSet rs = st.executeQuery(query);
-//				while (rs.next()) {
-//					int b_ID = rs.getInt("Branch_ID");
-//					String hotelName = rs.getString("H_Name");
-//					String city = rs.getString("City");
-//					String Street_Name = rs.getString("Street_Name");
-//					int Street_Num = rs.getInt("Street_Num");
-//					String number = rs.getString("Phone_Number");
-//
-//					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
-//				}
-//			}
-//			else if(tableNumber == 5) {
-//				System.out.printf();
-//				ResultSet rs = st.executeQuery(query);
-//				while (rs.next()) {
-//					int b_ID = rs.getInt("Branch_ID");
-//					String hotelName = rs.getString("H_Name");
-//					String city = rs.getString("City");
-//					String Street_Name = rs.getString("Street_Name");
-//					int Street_Num = rs.getInt("Street_Num");
-//					String number = rs.getString("Phone_Number");
-//
-//					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
-//				}
-//			}
-//			else if(tableNumber == 6) {
-//				System.out.printf();
-//				ResultSet rs = st.executeQuery(query);
-//				while (rs.next()) {
-//					int b_ID = rs.getInt("Branch_ID");
-//					String hotelName = rs.getString("H_Name");
-//					String city = rs.getString("City");
-//					String Street_Name = rs.getString("Street_Name");
-//					int Street_Num = rs.getInt("Street_Num");
-//					String number = rs.getString("Phone_Number");
-//
-//					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
-//				}
-//			}
-//			else if(tableNumber == 7) {
-//				System.out.printf();
-//				ResultSet rs = st.executeQuery(query);
-//				while (rs.next()) {
-//					int b_ID = rs.getInt("Branch_ID");
-//					String hotelName = rs.getString("H_Name");
-//					String city = rs.getString("City");
-//					String Street_Name = rs.getString("Street_Name");
-//					int Street_Num = rs.getInt("Street_Num");
-//					String number = rs.getString("Phone_Number");
-//
-//					System.out.printf("| %10s | %6d | %6d %15s %10s | %10s|\n", hotelName, b_ID, Street_Num, Street_Name, city, number);
-//				}
-//			}
+			else if(tableNumber == 3) {
+				System.out.printf(" %s %13s %11s %11s\n", "Branch_ID", "Hotel_Name", "Room_Type", "Quantity");
+				ResultSet rs = st.executeQuery(query);
+				while (rs.next()) {
+					int b_ID = rs.getInt("Branch_ID");
+					String hotelName = rs.getString("H_Name");
+					String room_t = rs.getString("R_Type");
+					int quantity = rs.getInt("Quantity");
+
+					System.out.printf("| %10s | %10d | %10s | %8d|\n", hotelName, b_ID, room_t, quantity);
+				}
+			}
+			else if(tableNumber == 4) {
+				System.out.printf(" %s %9s %18s %11s %9s %16s %10s %20s %15s\n", "Res_Num", "C_ID", "Hotel_Name", "Branch_id", "R_Type", "Party_Size", "Check_In", "Check_Out", "Total");
+				ResultSet rs = st.executeQuery(query);
+				while (rs.next()) {
+                    String res_num = rs.getString("Res_Num");
+                    String c_id = rs.getString("C_ID");
+                    int party_size = rs.getInt("Party_Size");
+                    int total = rs.getInt("Total");
+
+                    int day_in = rs.getInt("day_in");
+                    int month_in = rs.getInt("month_in");
+                    int year_in = rs.getInt("year_in");
+
+                    int day_out = rs.getInt("day_out");
+                    int month_out = rs.getInt("month_out");
+                    int year_out = rs.getInt("year_out");
+
+                    String hotel_name = rs.getString("H_Name");
+                    int b_id = rs.getInt("Branch_ID");
+                    String room_t = rs.getString("R_Type");
+
+                    System.out.printf("| %10s | %10s | %10s | %10d | %10s | %10d | %10d/%d/%d | %10d/%d/%d | $%10d |\n", res_num, c_id, hotel_name, b_id, room_t, party_size, month_in, day_in, year_in, month_out, day_out, year_out, total);
+				}
+			}
+			else if(tableNumber == 5) {
+			    System.out.printf(" %s %10s %7s %15s %8s %16s\n", "Hotel_Name", "Branch_ID", "Date", "Room_Type", "Price", "Num_Avail");
+				ResultSet rs = st.executeQuery(query);
+				while (rs.next()) {
+                    String h_name = rs.getString("H_Name");
+                    int b_id = rs.getInt("Branch_ID");
+                    String room_t = rs.getString("R_Type");
+                    int day = rs.getInt("Date_Month");
+                    int month = rs.getInt("Date_Day");
+                    int year = rs.getInt("Date_Year");
+                    int price = rs.getInt("Price");
+                    int num_avail = rs.getInt("Num_Avail");
+
+                    System.out.printf("|%10s | %10d | %d/%d/%d | %10s | $%10d | %10d|\n", h_name, b_id, month, day, year, room_t, price, num_avail);
+
+                }
+			}
+			else if(tableNumber == 6) {
+                System.out.printf(" %s %16s\n", "Room_Type", "Room_Capacity");
+				ResultSet rs = st.executeQuery(query);
+				while (rs.next()) {
+                    String room_t = rs.getString("R_Type");
+                    int capacity = rs.getInt("Capacity");
+
+                    System.out.printf("| %10s | %10d |\n", room_t, capacity);
+				}
+			}
 
 		} catch (Exception e) {
 			 System.err.println("Got an exception! ");
