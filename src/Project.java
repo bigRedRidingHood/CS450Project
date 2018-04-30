@@ -20,6 +20,7 @@ public class Project {
 	private static String jdbc_url = "jdbc:oracle:thin:@apollo.vse.gmu.edu:1521:ite10g";
 	private static String username;
 	private static String password;
+	private static int attSize = 0;
 
 	private static Connection connection;
 
@@ -73,6 +74,7 @@ public class Project {
 
     // Select tables for viewing
     // FUNCTION COMPLETE
+    // TODO: Implement option 3 for Searching DB
 	private static void getTables(String prevOp) throws SQLException {
 		if(prevOp.equals("1")) {
 			Scanner scan = new Scanner(System.in);
@@ -125,16 +127,13 @@ public class Project {
 
 			switch (in) {
 				case 1:
-					manipData(1); // Add Table
+					manipData(1); // Add Tuples
 					break;
 				case 2:
-					manipData(2); // Add Tuples
+					manipData(2); // Delete Tuple
 					break;
 				case 3:
-					manipData(3); // Delete Tuple
-					break;
-				case 4:
-					manipData(4); // Update Tuple
+					manipData(3); // Update Tuple
 					break;
 				default:
 					break;
@@ -143,33 +142,50 @@ public class Project {
 	} // End getTables
 
 	// Function for the user to manipulate data in the DB
-	//TODO: Implement this function for user to manipulate data
+	//TODO: Implement insert and update tuples
 	public static void manipData(int tableNumber) throws SQLException {
 		Scanner scan = new Scanner(System.in);
-		String queryType = "";
+		String table;
+		String att;
+		int tmp;
+        int choice;
+
+		// Insert a tuple
 		if(tableNumber == 1) {
 
-		}
-		else if(tableNumber == 2) {
+		} // End Insert
 
-		}
 		// Remove Tuple
-		// TODO: need to cascade contraints upon removal of certain tuples
-		else if(tableNumber == 3) {
-			System.out.print("Delete tuple from what table?\n-> ");
-			String table = scan.nextLine();
-			System.out.print("Delete tuple by what attribute?\n-> ");
-			String att = scan.nextLine();
+		else if(tableNumber == 2) {
+            // Loop as long as user inputs incorrect option for selecting table
+            do {
+                System.out.println("Please select a table to delete from?");
+                System.out.println(
+                        "\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel_Rooms\n\t(4) Reservation\n\t(5) Price_Info\n\t(6) Room\n\t(7) Date_List");
+                System.out.print("-> ");
+                table = scan.nextLine();
+                tmp = Integer.parseInt(table);
+                table = setTQ(tmp);
+            }while(tmp <= 0 || tmp > 7);
+
+		    // Loop as long as user inputs incorrect option for selection attribute
+		    do {
+                System.out.println("Delete " + table + " by what attribute?");
+                viewAttributes(tmp);
+                System.out.print("\n-> ");
+                att = scan.nextLine();
+                choice = Integer.parseInt(att);
+                att = setTuQ(tmp, choice);
+            }while(choice <= 0 || choice > attSize);
+
+		    // Get user input for what they want deleted
 			System.out.print("Delete " + att + " that equals?\n-> ");
 			String info = scan.nextLine();
 
+			// Execute query
 			Statement statement = null;
 			statement = connection.createStatement();
 			try {
-				StringBuffer sbCascade = new StringBuffer();
-				sbCascade.append("ON DELETE CASCADE");
-				statement.executeUpdate(sbCascade.toString());
-
 				StringBuffer sbCreate = new StringBuffer();
 				sbCreate.append("Delete from " + table + " Where " + att + " = '" + info + "'");
 				statement.executeUpdate(sbCreate.toString());
@@ -180,14 +196,190 @@ public class Project {
 				statement.close();
 			}
 
-		}
-		else if(tableNumber == 4) {
+		} // End Remove
 
-		}
+		// Update a tuple
+		else if(tableNumber == 3) {
+
+		} // End Update
 
 	} // End manipData
 
+    // Function used to to assist with delete query
+    // FUNCTION COMPLETE
+    private static String setTQ(int tbl) {
+        switch(tbl) {
+            case 1:
+                return "Customer";
+            case 2:
+                return "Hotel";
+            case 3:
+                return "Hotel_Rooms";
+            case 4:
+                return "Reservation";
+            case 5:
+                return "Price_Info";
+            case 6:
+                return "Room";
+            case 7:
+                return "Date_List";
+        }
+        return "error";
+    } // End setTQ
 
+    // Function used to to assist with delete query
+    // FUNCTION COMPLETE
+    private static String setTuQ(int tbl, int atr) {
+        switch(tbl) {
+            case 1:
+                switch(atr) {
+                    case 1:
+                        return "C_ID";
+                    case 2:
+                        return "C_Name";
+                    case 3:
+                        return "Age";
+                    case 4:
+                        return "Gender";
+                }
+                break;
+            case 2:
+                switch(atr) {
+                    case 1:
+                        return "Branch_ID";
+                    case 2:
+                        return "H_Name";
+                    case 3:
+                        return "City";
+                    case 4:
+                        return "Street_Name";
+                    case 5:
+                        return "Street_Num";
+                    case 6:
+                        return "State";
+                    case 7:
+                        return "Phone_Number";
+                }
+                break;
+            case 3:
+                switch(atr) {
+                    case 1:
+                        return "Branch_ID";
+                    case 2:
+                        return "H_Name";
+                    case 3:
+                        return "R_Type";
+                    case 4:
+                        return "Quantity";
+                }
+                break;
+            case 4:
+                switch(atr) {
+                    case 1:
+                        return "Res_Num";
+                    case 2:
+                        return "C_ID";
+                    case 3:
+                        return "Party_Size";
+                    case 4:
+                        return "Total";
+                    case 5:
+                        return "day_in";
+                    case 6:
+                        return "month_in";
+                    case 7:
+                        return "year_in";
+                    case 8:
+                        return "day_out";
+                    case 9:
+                        return "month_out";
+                    case 10:
+                        return "year_out";
+                    case 11:
+                        return "H_Name";
+                    case 12:
+                        return "Branch_ID";
+                    case 13:
+                        return "R_Type";
+                }
+                break;
+            case 5:
+                switch(atr) {
+                    case 1:
+                        return "H_Name";
+                    case 2:
+                        return "Branch_ID";
+                    case 3:
+                        return "R_Type";
+                    case 4:
+                        return "Date_day";
+                    case 5:
+                        return "Date_month";
+                    case 6:
+                        return "Date_year";
+                    case 7:
+                        return "Price";
+                    case 8:
+                        return "Num_Avail";
+                }
+                break;
+            case 6:
+                switch(atr) {
+                    case 1:
+                        return "R_Type";
+                    case 2:
+                        return "Capacity";
+                }
+                break;
+            case 7:
+                switch(atr) {
+                    case 1:
+                        return "Date_day";
+                    case 2:
+                        return "Date_month";
+                    case 3:
+                        return "Date_year";
+                }
+                break;
+        }
+        return "error";
+    } // End setTuQ
+
+    // View the Attributes of the corresponding table
+    // FUNCTION COMPLETE
+    private static void viewAttributes(int Entity) {
+	    switch(Entity) {
+            case 1:
+                System.out.println("\n\t(1) C_ID\n\t(2) C_Name\n\t(3) Age\n\t(4) Gender");
+                attSize = 4;
+                break;
+            case 2:
+                System.out.println("\n\t(1) Branch_ID\n\t(2) H_Name\n\t(3) City\n\t(4) Street_Name\n\t(5) Street_Num\n\t(6) State\n\t(7) Phone_Number");
+                attSize = 7;
+                break;
+            case 3:
+                System.out.println("\n\t(1) Branch_ID\n\t(2) H_Name\n\t(3) R_Type\n\t(4) Quantity");
+                attSize = 4;
+                break;
+            case 4:
+                System.out.println("\n\t(1) Res_Num\n\t(2) C_ID\n\t(3) Party_Size\n\t(4) Total\n\t(5) day_in\n\t(6) month_in\n\t(7) year_in");
+                System.out.println("\t(8) day_out\n\t(9) month_out\n\t(10) year_out\n\t(11) H_Name\n\t(12) Branch_ID\n\t(13) R_Type");
+                attSize = 13;
+                break;
+            case 5:
+                System.out.println("\n\t(1) H_Name\n\t(2) Branch_ID\n\t(3) R_Type\n\t(4) Date_day\n\t(5) Date_month\n\t(6) Date_year\n\t(7) Price\n\t(8) Num_Avail");
+                attSize = 8;
+                break;
+            case 6:
+                System.out.println("\n\t(1) R_Type\n\t(2) Capacity");
+                attSize = 2;
+                break;
+            case 7:
+                System.out.println("\n\t(1) Date_day\n\t(2) Date_month\n\t(3) Date_year");
+                attSize = 3;
+                break;
+        }
+    } // End viewAttributes
 
 	// View table tuples
     // FUNCTION COMPLETE
@@ -434,10 +626,9 @@ public class Project {
 	// Print the menu for manipulating tables
 	// FUNCTION COMPLETE
 	public static void manipMenu() {
-		System.out.println("\n(1) Add Table");
-		System.out.println("(2) Add Tuple");
-		System.out.println("(3) Remove Tuple");
-		System.out.println("(4) Update Tuple");
+		System.out.println("\n(1) Add Tuple");
+		System.out.println("(2) Remove Tuple");
+		System.out.println("(3) Update Tuple");
 	}
 
 } // End Project
