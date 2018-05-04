@@ -21,8 +21,13 @@ public class Project {
 	private static String username;
 	private static String password;
 	private static int attSize = 0;
+    private static String query = "";
+    private static String SET = "";
+    private static String WHERE = "";
+    private static int SET_INT;
+    private static int WHERE_INT;
 
-	private static Connection connection;
+    private static Connection connection;
 
 	// Default Constructor
 	public Project() {
@@ -152,14 +157,39 @@ public class Project {
 
 		// Insert a tuple
 		if(tableNumber == 1) {
+            // Loop as long as user inputs incorrect option for selecting table
+            do {
+                System.out.println("Please select a table to insert into");
+                System.out.println(
+                        "\t(1) Customer\n\t(2) Reservation");
+                System.out.print("-> ");
+                table = scan.nextLine();
+                tmp = Integer.parseInt(table);
+                table = setTQ(tmp);
+            }while(tmp <= 0 || tmp > 2);
 
+            insertInto(tmp);
+            // Execute query
+            Statement statement = null;
+            statement = connection.createStatement();
+            try {
+                StringBuffer sbCreate = new StringBuffer();
+                sbCreate.append("Insert into " + table + " Values(" + query + ")");
+                statement.executeUpdate(sbCreate.toString());
+                System.out.println("Tuple Added");
+            }catch (SQLException e) {
+                throw e;
+            }
+            finally {
+                statement.close();
+            }
 		} // End Insert
 
 		// Remove Tuple
 		else if(tableNumber == 2) {
             // Loop as long as user inputs incorrect option for selecting table
             do {
-                System.out.println("Please select a table to delete from?");
+                System.out.println("Please select a table to delete from.");
                 System.out.println(
                         "\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel_Rooms\n\t(4) Reservation\n\t(5) Price_Info\n\t(6) Room\n\t(7) Date_List");
                 System.out.print("-> ");
@@ -186,9 +216,9 @@ public class Project {
 			Statement statement = null;
 			statement = connection.createStatement();
 			try {
-				StringBuffer sbCreate = new StringBuffer();
-				sbCreate.append("Delete from " + table + " Where " + att + " = '" + info + "'");
-				statement.executeUpdate(sbCreate.toString());
+				StringBuffer sbCreate2 = new StringBuffer();
+				sbCreate2.append("Delete from " + table + " Where " + att + " = '" + info + "'");
+				statement.executeUpdate(sbCreate2.toString());
 			}catch (SQLException e) {
 				throw e;
 			}
@@ -200,10 +230,226 @@ public class Project {
 
 		// Update a tuple
 		else if(tableNumber == 3) {
+            do {
+                System.out.println("Please select a table to update");
+                System.out.println(
+                        "\t(1) Customer\n\t(2) Reservation");
+                System.out.print("-> ");
+                table = scan.nextLine();
+                tmp = Integer.parseInt(table);
+                table = setTQ(tmp);
+            }while(tmp <= 0 || tmp > 2);
+
+            updateInto(tmp);
+            // Execute query
+            Statement statement = null;
+            statement = connection.createStatement();
+            try {
+                StringBuffer sbCreate = new StringBuffer();
+                sbCreate.append("UPDATE " + table + " SET " + query + SET_INT + " WHERE C_ID = " + WHERE);
+                statement.executeUpdate(sbCreate.toString());
+                System.out.println("Tuple Added");
+            }catch (SQLException e) {
+                throw e;
+            }
+            finally {
+                statement.close();
+            }
 
 		} // End Update
 
 	} // End manipData
+
+    // Function used to obtain information for updating tuples
+    private static void updateInto(int table) {
+        String C_ID = "";
+        String C_Name = "";
+        int Age = 0;
+        String Gender = "";
+        int GC = 0;
+        String Res_Num = "";
+        int Party_Size = 0;
+        int Total = 0;
+        int day_in = 0;
+        int month_in = 0;
+        int year_in = 0;
+        int day_out = 0;
+        int month_out = 0;
+        int year_out = 0;
+        String H_Name = "";
+        int Branch_ID = 0;
+        String R_Type = "";
+        Scanner scan = new Scanner(System.in);
+
+        switch (table) {
+            case 1: // Customer
+                System.out.printf("\t(1) Age\n");
+                System.out.printf("\t(2) Gender\n");
+                System.out.println("Update which Customer attribute?");
+                System.out.print("-> ");
+                int input = scan.nextInt();
+                switch(input) {
+                    case 1:
+                        System.out.print("Set new Age: ");
+                        Age = scan.nextInt();
+                        SET_INT = Age;
+                        System.out.println("For what customer? (Enter Customer_ID)");
+                        System.out.print("-> ");
+                        C_ID = scan.nextLine();
+                        C_ID = scan.nextLine();
+                        WHERE = C_ID;
+                        query = "Age = ";
+                        break;
+                    case 2:
+                        System.out.println("Set new Gender: ");
+                        Gender = scan.nextLine();
+                        System.out.println("For what customer? (Enter Customer_ID)");
+                        C_ID = scan.nextLine();
+                        break;
+                    default:
+                        System.out.println("Invalid choice, please select again.");
+                        viewAttributes(1);
+                        System.out.println("Update which Customer attribute? (not C_ID)");
+                }
+
+
+                break;
+            case 2: // Reservation
+                viewAttributes(4);
+
+
+        } // end Switch
+    } // end updateInto
+
+    // Function used to assist in inserting tuples into tables
+    // TODO: Finish adding to reservation
+    private static void insertInto(int table) throws SQLException {
+	    String C_ID = "";
+	    String C_Name = "";
+	    int Age = 0;
+	    String Gender = "";
+	    int GC = 0;
+        String Res_Num = "";
+        int Party_Size = 0;
+        int Total = 0;
+        int day_in = 0;
+        int month_in = 0;
+        int year_in = 0;
+        int day_out = 0;
+        int month_out = 0;
+        int year_out = 0;
+        String H_Name = "";
+        int Branch_ID = 0;
+        String R_Type = "";
+        Scanner scan = new Scanner(System.in);
+
+	    switch(table) {
+            case 1: // Customer
+                viewAttributes(1);
+                while(C_ID.length() != 5) {
+                    System.out.println("Please enter Customer ID. (Length must be 5 characters)");
+                    System.out.print("Customer ID -> ");
+                    C_ID = scan.nextLine();
+                }
+                while((C_Name.length() < 1) || (C_Name.length() > 20)) {
+                    System.out.println("Please enter Customer Name. (Limit 20 Characters)");
+                    System.out.print("Customer Name -> ");
+                    C_Name = scan.nextLine();
+                }
+                while(Age < 18 || Age > 100) {
+                    System.out.println("Please enter Customer Age.");
+                    System.out.print("Customer Age -> ");
+                    Age = scan.nextInt();
+                }
+                while(GC < 1 || GC > 2) {
+                    System.out.println("Please enter Customer Gender. (1 for Male, 2 for Female)");
+                    System.out.print("Customer Gender -> ");
+                    GC = scan.nextInt();
+                    if(GC == 1)
+                        Gender = "Male";
+                    else if(GC == 2)
+                        Gender = "Female";
+                }
+                query = "'" + C_ID + "', '" + C_Name + "', " + Age + ", '" + Gender + "'";
+                break;
+            case 2: // Reservation
+                viewAttributes(4);
+                while(Res_Num.length() != 7) {
+                    System.out.println("\nPlease enter Reservation Number. (Length must be 7 characters)");
+                    System.out.print("Reservation Number -> ");
+                    Res_Num = scan.nextLine();
+                }
+                while(C_ID.length() != 5) {
+                    System.out.println("\nPlease enter Customer ID. (Length must be 5 characters)");
+                    System.out.print("Customer ID -> ");
+                    C_ID = scan.nextLine();
+                }
+                while(Party_Size < 1 || Party_Size > 6) {
+                    System.out.println("\nPlease enter number in your party. (1 - 6)");
+                    System.out.print("Party Size -> ");
+                    Party_Size = scan.nextInt();
+                }
+                while(day_in < 1 || day_in > 31 || month_in < 1 || month_in > 12 || year_in != 2018) {
+                    System.out.print("\nCheck in month (number) -> ");
+                    month_in = scan.nextInt();
+                    System.out.println("day/" + month_in + "/year");
+                    System.out.println("\nWhat is your check in date?");
+                    System.out.print("Check in day -> ");
+                    day_in = scan.nextInt();
+                    System.out.println(day_in + "/" + month_in + "/year");
+                    System.out.print("\nCheck in year (current year) -> ");
+                    year_in = scan.nextInt();
+                    System.out.println("\nYour Check in date: " + day_in + "/" + month_in + "/" + year_in + "\n");
+                }
+                while(day_out < 1 || day_out > 31 || month_out < 1 || month_out > 12 || year_out != 2018) {
+                    System.out.println("What is your check out date?");
+                    System.out.print("\nCheck out month (number) -> ");
+                    month_out = scan.nextInt();
+                    System.out.println("day/" + month_out + "/year");
+                    System.out.print("\nCheck out day -> ");
+                    day_out = scan.nextInt();
+                    System.out.println(day_out + "/" + month_out + "/year");
+                    System.out.print("\nCheck out year (current year) -> ");
+                    year_out = scan.nextInt();
+                    System.out.println("\nYour Check out date: " + day_out + "/" + month_out + "/" + year_out);
+                }
+                while(!H_Name.equals("Hilton") && !H_Name.equals("Hyatt") && !H_Name.equals("HansEtFonz")) {
+                    System.out.println("\nSelect your hotel. (Hilton, Hyatt, HansEtFonz)");
+                    System.out.print("Hotel -> ");
+                    String tmp = scan.nextLine();
+                    H_Name = scan.nextLine();
+                }
+                if(H_Name.equals("Hilton")) {
+                    while(Branch_ID != 1000 && Branch_ID != 1001 && Branch_ID != 1002) {
+                        System.out.println("\nSelect your Branch. (1000, 1001, 1002)");
+                        System.out.print("Branch ID -> ");
+                        Branch_ID = scan.nextInt();
+                    }
+                }
+                else if(H_Name.equals("Hyatt")) {
+                    while(Branch_ID != 1003 && Branch_ID != 1004 && Branch_ID != 1005) {
+                        System.out.println("\nSelect your Branch. (1003, 1004, 1005)");
+                        System.out.print("Branch ID -> ");
+                        Branch_ID = scan.nextInt();
+                    }
+                }
+                else if(H_Name.equals("HansEtFonz")) {
+                    while(Branch_ID != 1006 && Branch_ID != 1007 && Branch_ID != 1008) {
+                        System.out.println("\nSelect your Branch. (1006, 1007, 1008)");
+                        System.out.print("Branch ID -> ");
+                        Branch_ID = scan.nextInt();
+                    }
+                }
+                while(!R_Type.equals("King") && !R_Type.equals("Suite") && !R_Type.equals("Queen") && !R_Type.equals("Twin")) {
+                    System.out.println("\nSelect your Room Type. (King, Suite, Queen, Twin)");
+                    System.out.print("Room Type -> ");
+                    String tmp = scan.nextLine();
+                    R_Type = scan.nextLine();
+                }
+
+                query = "'" + Res_Num + "', '" + C_Name + "', " + Total + ", "+ day_in + ", " + month_in + ", " + year_in + ", " + day_out + ", " + month_out + ", " + year_out + ", '" + H_Name + "', " + Branch_ID + ", '" + R_Type + "'";
+        }
+    } // End insertInto
 
     // Function used to to assist with delete query
     // FUNCTION COMPLETE
@@ -488,7 +734,7 @@ public class Project {
                     int price = rs.getInt("Price");
                     int num_avail = rs.getInt("Num_Avail");
 
-                    System.out.printf("|%10s | %10d | %d/%d/%d | %10s | $%10d | %10d|\n", h_name, b_id, month, day, year, room_t, price, num_avail);
+                    System.out.printf("|%10s | %10d | %d/%d/%d | %10s | $%10d | %10d|\n", h_name, b_id, day, month, year, room_t, price, num_avail);
 
                 }
 			}
