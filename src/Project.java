@@ -34,7 +34,6 @@ public class Project {
 	}
 
 	// TODO: make password invisible when logging in if we have time
-    // TODO: manipulate records, ie. add, delete, edit?
     // TODO: search database, ie. find reservations and other basic searches
 	public static void main(String arg[]) throws SQLException, ClassNotFoundException {
 		Scanner scan = new Scanner(System.in);
@@ -124,7 +123,7 @@ public class Project {
 			int in = 0;
 			do {
 				manipMenu();
-				System.out.println("\nPlease select an option. (1, 2, 3, or 4)");
+				System.out.println("\nPlease select an option. (1, 2 or 3)");
 				System.out.print("-> ");
 				String input = scan.nextLine();
 				in = Integer.parseInt(input);
@@ -147,7 +146,7 @@ public class Project {
 	} // End getTables
 
 	// Function for the user to manipulate data in the DB
-	//TODO: Implement insert and update tuples
+    // FUNCTION COMPLETE
 	public static void manipData(int tableNumber) throws SQLException {
 		Scanner scan = new Scanner(System.in);
 		String table;
@@ -161,12 +160,12 @@ public class Project {
             do {
                 System.out.println("Please select a table to insert into");
                 System.out.println(
-                        "\t(1) Customer\n\t(2) Reservation");
+                        "\t(1) Customer\n\t(2) Hotel\n\t(3) Hotel_Rooms\n\t(4) Reservation\n\t(5) Price_Info\n\t(6) Room\n\t(7) Date_List");
                 System.out.print("-> ");
                 table = scan.nextLine();
                 tmp = Integer.parseInt(table);
                 table = setTQ(tmp);
-            }while(tmp <= 0 || tmp > 2);
+            }while(tmp <= 0 || tmp > 7);
 
             insertInto(tmp);
             // Execute query
@@ -237,7 +236,10 @@ public class Project {
                 System.out.print("-> ");
                 table = scan.nextLine();
                 tmp = Integer.parseInt(table);
-                table = setTQ(tmp);
+                if(tmp == 1)
+                    table = "Customer";
+                else if(tmp == 2)
+                    table = "Reservation";
             }while(tmp <= 0 || tmp > 2);
 
             updateInto(tmp);
@@ -246,9 +248,8 @@ public class Project {
             statement = connection.createStatement();
             try {
                 StringBuffer sbCreate = new StringBuffer();
-                sbCreate.append("UPDATE " + table + " SET " + query + SET_INT + " WHERE C_ID = " + WHERE);
+                sbCreate.append("UPDATE " + table + " SET " + query + " WHERE " + WHERE);
                 statement.executeUpdate(sbCreate.toString());
-                System.out.println("Tuple Added");
             }catch (SQLException e) {
                 throw e;
             }
@@ -261,6 +262,7 @@ public class Project {
 	} // End manipData
 
     // Function used to obtain information for updating tuples
+    // TODO: Add ability to update remaining tables
     private static void updateInto(int table) {
         String C_ID = "";
         String C_Name = "";
@@ -285,6 +287,7 @@ public class Project {
             case 1: // Customer
                 System.out.printf("\t(1) Age\n");
                 System.out.printf("\t(2) Gender\n");
+                System.out.printf("\t(3) Name\n");
                 System.out.println("Update which Customer attribute?");
                 System.out.print("-> ");
                 int input = scan.nextInt();
@@ -297,25 +300,92 @@ public class Project {
                         System.out.print("-> ");
                         C_ID = scan.nextLine();
                         C_ID = scan.nextLine();
-                        WHERE = C_ID;
-                        query = "Age = ";
+                        WHERE = " C_ID = '" + C_ID + "'";
+                        query = "Age = " + SET_INT;
                         break;
                     case 2:
                         System.out.println("Set new Gender: ");
+                        System.out.print("-> ");
                         Gender = scan.nextLine();
+                        Gender = scan.nextLine();
+                        SET = Gender;
                         System.out.println("For what customer? (Enter Customer_ID)");
+                        System.out.print("-> ");
                         C_ID = scan.nextLine();
+                        WHERE = C_ID;
+                        query = "Gender = '" + SET + "' ";
+                        break;
+                    case 3:
+                        System.out.println("Set new Name: ");
+                        System.out.print("-> ");
+                        C_Name = scan.nextLine();
+                        C_Name = scan.nextLine();
+                        SET = C_Name;
+                        System.out.println("For what customer? (Enter Customer_ID)");
+                        System.out.print("-> ");
+                        C_ID = scan.nextLine();
+                        WHERE = C_ID;
+                        query = "C_Name = '" + SET + "' ";
                         break;
                     default:
                         System.out.println("Invalid choice, please select again.");
-                        viewAttributes(1);
-                        System.out.println("Update which Customer attribute? (not C_ID)");
+                        System.out.printf("\t(1) Age\n");
+                        System.out.printf("\t(2) Gender\n");
+                        System.out.printf("\t(3) Name\n");
+                        System.out.println("Update which Customer attribute?");
+                        System.out.print("-> ");
+                        input = scan.nextInt();
                 }
 
 
                 break;
             case 2: // Reservation
-                viewAttributes(4);
+                System.out.print("\nPlease enter your Reservation ID: ");
+                Res_Num = scan.nextLine();
+                WHERE = "Res_Num = '"+Res_Num+"'";
+                System.out.printf("\t(1) Check in/out dates\n");
+                System.out.printf("\t(2) Hotel\n");
+                System.out.printf("\t(3) Room Type\n");
+                System.out.println("Update Reservation by which attribute?");
+                System.out.print("-> ");
+                input = scan.nextInt();
+                switch(input) {
+                    case 1:
+                        System.out.print("Set new Check in date: ");
+                        System.out.print("\nMonth (1-12) -> ");
+                        month_in = scan.nextInt();
+                        System.out.print("\nDay (1-31) -> ");
+                        day_in = scan.nextInt();
+                        System.out.print("\n\nSet new Check out date: ");
+                        System.out.print("\nMonth (1-12) -> ");
+                        month_out = scan.nextInt();
+                        System.out.print("\nDay (1-31) -> ");
+                        day_out = scan.nextInt();
+                        query = "month_in = "+month_in+", day_in = "+day_in+", month_out = "+month_out+", day_out = "+day_out;
+                        break;
+                    case 2:
+                        System.out.print("Set new Hotel: ");
+                        H_Name = scan.nextLine();
+                        H_Name = scan.nextLine();
+                        System.out.print("Set Hotel Branch Number: ");
+                        Branch_ID = scan.nextInt();
+                        query = "H_Name = '"+H_Name+"', Branch_ID = '" + Branch_ID +"'";
+                        break;
+                    case 3:
+                        System.out.print("Set new Room Type: ");
+                        R_Type = scan.nextLine();
+                        R_Type = scan.nextLine();
+                        query = "R_Type = '"+R_Type+"'";
+                        break;
+                    default:
+                        System.out.println("Invalid choice, please select again.");
+                        System.out.printf("\t(1) Check in/out dates\n");
+                        System.out.printf("\t(2) Hotel\n");
+                        System.out.printf("\t(3) Room Type\n");
+                        System.out.println("Update Reservation by which attribute?");
+                        System.out.print("-> ");
+                        input = scan.nextInt();
+                }
 
 
         } // end Switch
@@ -341,6 +411,13 @@ public class Project {
         String H_Name = "";
         int Branch_ID = 0;
         String R_Type = "";
+        String City = "";
+        String Street_Name = "";
+        int Street_Num = 0;
+        String Phone_Number = "";
+        String State = "";
+        int Capacity = 0;
+        int Price = 0;
         Scanner scan = new Scanner(System.in);
 
 	    switch(table) {
@@ -372,7 +449,39 @@ public class Project {
                 }
                 query = "'" + C_ID + "', '" + C_Name + "', " + Age + ", '" + Gender + "'";
                 break;
-            case 2: // Reservation
+            case 2: // Hotel
+                System.out.print("Hotel Name: ");
+                H_Name = scan.nextLine();
+                System.out.print("Hotel Branch Number: ");
+                Branch_ID = scan.nextInt();
+                System.out.print("City: ");
+                City = scan.nextLine();
+                City = scan.nextLine();
+                System.out.print("Street Name: ");
+                Street_Name = scan.nextLine();
+                Street_Name = scan.nextLine();
+                System.out.print("Street Number: ");
+                Street_Num = scan.nextInt();
+                System.out.print("State: ");
+                State = scan.nextLine();
+                State = scan.nextLine();
+                System.out.print("Phone Number: ");
+                Phone_Number = scan.nextLine();
+                query = Branch_ID+", '"+H_Name+"', '"+City+"', '"+Street_Name+"', "+Street_Num+", '"+State+"', '"+Phone_Number+"'";
+                break;
+            case 3: // Hotel_Room
+                System.out.print("Hotel Name: ");
+                H_Name = scan.nextLine();
+                System.out.print("Hotel Branch Number: ");
+                Branch_ID = scan.nextInt();
+                System.out.print("Room Type: ");
+                R_Type = scan.nextLine();
+                R_Type = scan.nextLine();
+                System.out.print("Number of rooms: ");
+                Capacity = scan.nextInt();
+                query = Branch_ID+", '"+H_Name+"', '"+R_Type+"', "+Capacity;
+                break;
+            case 4: // Reservation
                 viewAttributes(4);
                 while(Res_Num.length() != 7) {
                     System.out.println("\nPlease enter Reservation Number. (Length must be 7 characters)");
@@ -392,26 +501,26 @@ public class Project {
                 while(day_in < 1 || day_in > 31 || month_in < 1 || month_in > 12 || year_in != 2018) {
                     System.out.print("\nCheck in month (number) -> ");
                     month_in = scan.nextInt();
-                    System.out.println("day/" + month_in + "/year");
+                    System.out.println(month_in + "/day/" + "/year");
                     System.out.println("\nWhat is your check in date?");
                     System.out.print("Check in day -> ");
                     day_in = scan.nextInt();
-                    System.out.println(day_in + "/" + month_in + "/year");
+                    System.out.println(month_in + "/" + day_in + "/year");
                     System.out.print("\nCheck in year (current year) -> ");
                     year_in = scan.nextInt();
-                    System.out.println("\nYour Check in date: " + day_in + "/" + month_in + "/" + year_in + "\n");
+                    System.out.println("\nYour Check in date: " + month_in + "/" + day_in + "/" + year_in + "\n");
                 }
                 while(day_out < 1 || day_out > 31 || month_out < 1 || month_out > 12 || year_out != 2018) {
                     System.out.println("What is your check out date?");
                     System.out.print("\nCheck out month (number) -> ");
                     month_out = scan.nextInt();
-                    System.out.println("day/" + month_out + "/year");
+                    System.out.println(month_out + "/day/" + "/year");
                     System.out.print("\nCheck out day -> ");
                     day_out = scan.nextInt();
-                    System.out.println(day_out + "/" + month_out + "/year");
+                    System.out.println(month_out + "/" + day_out + "/year");
                     System.out.print("\nCheck out year (current year) -> ");
                     year_out = scan.nextInt();
-                    System.out.println("\nYour Check out date: " + day_out + "/" + month_out + "/" + year_out);
+                    System.out.println("\nYour Check out date: " + month_out + "/" + day_out + "/" + year_out);
                 }
                 while(!H_Name.equals("Hilton") && !H_Name.equals("Hyatt") && !H_Name.equals("HansEtFonz")) {
                     System.out.println("\nSelect your hotel. (Hilton, Hyatt, HansEtFonz)");
@@ -446,8 +555,46 @@ public class Project {
                     String tmp = scan.nextLine();
                     R_Type = scan.nextLine();
                 }
+                Total = 0;
+                query = "'" + Res_Num + "', '" + C_Name + "', " + Total + ", "+ month_in + ", " + day_in + ", " + year_in + ", " + month_out + ", " + day_out + ", " + year_out + ", '" + H_Name + "', " + Branch_ID + ", '" + R_Type + "'";
+                break;
+            case 5: // Pricing
+                System.out.print("Hotel Name: ");
+                H_Name = scan.nextLine();
+                System.out.print("Hotel Branch Number: ");
+                Branch_ID = scan.nextInt();
+                System.out.print("Room Type: ");
+                R_Type = scan.nextLine();
+                R_Type = scan.nextLine();
+                System.out.print("Month (1-12): ");
+                month_in = scan.nextInt();
+                System.out.print("Day (1-31): ");
+                day_in = scan.nextInt();
+                System.out.print("Year: ");
+                year_in = scan.nextInt();
+                System.out.print("Price: ");
+                Price = scan.nextInt();
+                System.out.print("Number of rooms: ");
+                Capacity = scan.nextInt();
+                query = "'"+H_Name+"', "+Branch_ID+", '"+R_Type+", "+month_in+", "+day_in+", "+year_in+", "+Price+", "+Capacity;
+                break;
+            case 6: // Room
+                System.out.print("Room Type: ");
+                R_Type = scan.nextLine();
+                System.out.print("Room Capacity: ");
+                Capacity = scan.nextInt();
+                query = "'"+R_Type+"', "+Capacity;
+                break;
 
-                query = "'" + Res_Num + "', '" + C_Name + "', " + Total + ", "+ day_in + ", " + month_in + ", " + year_in + ", " + day_out + ", " + month_out + ", " + year_out + ", '" + H_Name + "', " + Branch_ID + ", '" + R_Type + "'";
+            case 7: // Dates
+                System.out.print("Month (1-12): ");
+                month_in = scan.nextInt();
+                System.out.print("Day (1-31): ");
+                day_in = scan.nextInt();
+                System.out.print("Year: ");
+                year_in = scan.nextInt();
+                query = month_in+", "+day_in+", "+year_in;
+                break;
         }
     } // End insertInto
 
