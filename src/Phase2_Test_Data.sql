@@ -39,3 +39,7 @@ insert into Reservation values('1000000','01d00',6,0,1,1,2018,1,2,2018,'Hilton',
 insert into Reservation values('1000001','95766',3,0,1,2,2018,1,3,2018,'Hilton',1001,'King');
 insert into Reservation values('1000002','e8607',4,0,1,3,2018,1,4,2018,'Hyatt',1003,'Suite');
 insert into Reservation values('1000003','f846e',2,0,1,4,2018,1,5,2018,'Hyatt',1004,'Suite');
+
+
+insert into Reservation values('1000004', '01d00', 8,0,1,2,2018,1,4,2018,'Hilton',1000,'Suite');
+delete from Reservation where Res_Num = '1000004';

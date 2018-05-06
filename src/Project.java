@@ -152,7 +152,7 @@ public class Project {
 
 		// Insert a tuple
 		if(tableNumber == 1) {
-
+			System.out.println();
 		} // End Insert
 
 		// Remove Tuple

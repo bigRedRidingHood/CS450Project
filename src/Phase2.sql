@@ -12,3 +12,50 @@ create table Hotel_Room(Branch_ID integer,H_Name varchar2(20), R_Type varchar2(1
 create table Date_List(Date_day integer, Date_month integer,Date_year integer,Primary key(Date_day, Date_month, Date_year));
 create table Price_Info(H_Name varchar2(20),Branch_ID integer,R_Type varchar2(10),Date_day integer,Date_month integer,Date_year integer,Price integer,Num_Avail integer,Primary key (H_Name, Branch_ID, R_Type, Date_day, Date_month, Date_year),Foreign key (H_Name, Branch_ID) references Hotel(H_Name, Branch_ID) on delete cascade ,Foreign key (R_Type) references Room(R_Type) on delete cascade ,Foreign key (Date_day, Date_month, Date_year) references Date_List(Date_day, Date_month, Date_year) on delete cascade);
 create table Reservation(Res_Num varchar2(7),C_ID varchar2(5),Party_Size integer, Total integer,day_in integer,month_in integer,year_in integer,day_out integer,month_out integer,year_out integer,H_Name varchar2(20),Branch_ID integer,R_Type varchar2(10), Primary key (Res_Num),Foreign key (C_ID) references Customer(C_ID) on delete cascade ,Foreign key (day_in, month_in, year_in) references Date_List(Date_day, Date_month, Date_year) on delete cascade,Foreign key (day_out, month_out, year_out) references Date_List(Date_day, Date_month, Date_year) on delete cascade,Foreign key (H_Name, Branch_ID) references Hotel(H_Name, Branch_ID) on delete cascade,Foreign key (R_Type) references Room(R_Type) on delete cascade);
+
+create or replace trigger roomCapacity
+        before insert or update on Reservation
+        for each row
+        declare
+                groupSize integer;
+                roomCap integer;
+                Exceeds Exception;
+        begin
+
+        groupSize := :new.Party_size;
+
+        select Capacity into roomCap from room
+        where R_Type = :new.R_Type;
+
+        if (groupSize > roomCap)
+        then
+                raise Exceeds;
+        end if;
+        Exception
+                When Exceeds then
+                Raise_application_error(-20001, 'Party Size exceeds Room Capacity!');
+end;
+/
+
+create or replace trigger updatePrice
+     after insert or update on Reservation
+     for each row
+     declare
+             setPrice integer;
+     begin
+
+     dbms_output.put_line('New Class Added. Contract Fee increased by $10');
+             setPrice := 0;
+       
+      End;
+
+
+      select Price into setPrice
+              from Price_Info
+              where ((price_Info.H_Name == :new.H_Name) && (price_Info.Branch_ID == :new.Branch    _ID));
+              update Reservation
+                      set total = setPrice
+              where res_num = :new.res_num;
+insert into Reservation values('1000004', '01d00', 8,0,1,2,2018,1,4,2018,'Hilton',1000,'Suite');
+insert into Reservation values('1000004', '01d00', 3,0,1,2,2018,1,4,2018,'Hilton',1000,'Suite');
+delete from Reservation where Res_Num = '1000004';
