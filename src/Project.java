@@ -25,7 +25,6 @@ public class Project {
     private static String SET = "";
     private static String WHERE = "";
     private static int SET_INT;
-    private static int WHERE_INT;
 
     private static Connection connection;
 
@@ -63,6 +62,7 @@ public class Project {
 				break;
 			case "3":
 				// Search Database
+                getTables(option);
 				break;
 			case "4":
 				// Quit Program
@@ -80,6 +80,7 @@ public class Project {
     // FUNCTION COMPLETE
     // TODO: Implement option 3 for Searching DB
 	private static void getTables(String prevOp) throws SQLException {
+	    String C_ID = "";
 		if(prevOp.equals("1")) {
 			Scanner scan = new Scanner(System.in);
 			int choice = 0;
@@ -143,13 +144,55 @@ public class Project {
 					break;
 			}
 		}
+        else if(prevOp.equals("3")) {
+            Scanner scan = new Scanner(System.in);
+            System.out.println("\n\t(1) Search for a reservation\n\t(2) Find Availability\n\t(3) Find Pricing");
+            System.out.print("-> ");
+            int opt = scan.nextInt();
+            switch(opt) {
+                case 1: // Search for Reservation
+                    System.out.print("Enter Customer ID: ");
+                    C_ID = scan.nextLine();
+                    C_ID = scan.nextLine();
+                    Statement statement = null;
+                    statement = connection.createStatement();
+                    StringBuffer sbCreate = new StringBuffer();
+                    sbCreate.append("SELECT C_ID, C_Name, Res_Num FROM Reservation NATURAL JOIN (select C_ID, C_Name from Customer) WHERE C_ID = '" + C_ID + "'");
+                    System.out.println("\nResult:");
+                    try {
+                        ResultSet rs = statement.executeQuery(sbCreate.toString());
+                        System.out.printf(" %s  %13s  %12s \n", "C_ID", "C_Name", "Res_Num");
+                        while (rs.next()) {
+                            String C_ID_ = rs.getString("C_ID");
+                            String name = rs.getString("C_Name");
+                            String Res_Num = rs.getString("Res_Num");
+                            System.out.printf("| %10s | %10s | %10s |\n", C_ID_, name, Res_Num);
+                        }
+                    }catch (SQLException e) {
+                        throw e;
+                    }
+                    finally {
+                        statement.close();
+                    }
+                    break;
+                    //TODO ADD QUERY HERE
+                case 2: // Availability
+
+                    break;
+                //TODO ADD QUERY HERE
+                case 3: // Pricing
+
+                    break;
+            }
+
+        }
 	} // End getTables
 
 	// Function for the user to manipulate data in the DB
     // FUNCTION COMPLETE
 	public static void manipData(int tableNumber) throws SQLException {
 		Scanner scan = new Scanner(System.in);
-		String table;
+		String table = "";
 		String att;
 		int tmp;
         int choice;
@@ -174,8 +217,8 @@ public class Project {
             try {
                 StringBuffer sbCreate = new StringBuffer();
                 sbCreate.append("Insert into " + table + " Values(" + query + ")");
+                System.out.println(sbCreate);
                 statement.executeUpdate(sbCreate.toString());
-                System.out.println("Tuple Added");
             }catch (SQLException e) {
                 throw e;
             }
@@ -234,19 +277,23 @@ public class Project {
                 System.out.println(
                         "\t(1) Customer\n\t(2) Hotel\n\t(3) Reservation\n\t(4) Price_Info\n\t(5) Room");
                 System.out.print("-> ");
-                table = scan.nextLine();
-                tmp = Integer.parseInt(table);
+                tmp = scan.nextInt();
                 switch(tmp) {
                     case 1:
                         table = "Customer";
+                        break;
                     case 2:
                         table = "Hotel";
+                        break;
                     case 3:
                         table = "Reservation";
+                        break;
                     case 4:
                         table = "Price_Info";
+                        break;
                     case 5:
                         table = "Room";
+                        break;
                 }
             }while(tmp <= 0 || tmp > 5);
 
@@ -270,7 +317,7 @@ public class Project {
 	} // End manipData
 
     // Function used to obtain information for updating tuples
-    // TODO: Add ability to update remaining tables
+    // FUNCTION COMPLETE
     private static void updateInto(int table) {
         String C_ID = "";
         String C_Name = "";
@@ -298,7 +345,6 @@ public class Project {
         int input = 0;
 
         switch (table) {
-            //TODO: FIX THIS
             case 1: // Customer
                 System.out.printf("\t(1) Age\n");
                 System.out.printf("\t(2) Gender\n");
@@ -310,13 +356,12 @@ public class Project {
                     case 1:
                         System.out.print("Set new Age: ");
                         Age = scan.nextInt();
-                        SET_INT = Age;
                         System.out.println("For what customer? (Enter Customer_ID)");
                         System.out.print("-> ");
                         C_ID = scan.nextLine();
                         C_ID = scan.nextLine();
-                        WHERE = "C_ID = '" + C_ID + "' ";
-                        query = "Age = " + SET_INT;
+                        WHERE = "C_ID = '" + C_ID + "'";
+                        query = "Age = " + Age;
                         break;
                     case 2:
                         System.out.println("Set new Gender: ");
@@ -401,7 +446,6 @@ public class Project {
                         input = scan.nextInt();
                 }
                 break;
-                //TODO: CANT UPDATE RESERVATION
             case 3: // Reservation
                 System.out.print("\nPlease enter your Reservation ID: ");
                 Res_Num = scan.nextLine();
@@ -450,7 +494,6 @@ public class Project {
                         input = scan.nextInt();
                 }
                 break;
-            //TODO: CANT UPDATE PRICE_INFO
             case 4: // Price_Info
                 System.out.println("Set new room price: ");
                 System.out.print("-> ");
@@ -478,7 +521,7 @@ public class Project {
     } // end updateInto
 
     // Function used to assist in inserting tuples into tables
-    // TODO: Fix inserting into reservation
+    // FUNCTION COMPLETE
     private static void insertInto(int table) throws SQLException {
 	    String C_ID = "";
 	    String C_Name = "";
@@ -878,11 +921,14 @@ public class Project {
 		String query="SELECT * FROM " + table + " WHERE ROWNUM < 6";
 
 		System.out.println("\tDisplay full list?\n\t\t(1) Yes.\n\t\t(2) No.");
+        System.out.print("-> ");
 		int c = Integer.parseInt(scan.nextLine());
 		if(c < 1 || c>2)
 			do {
 				System.out.println("Please select either Yes (1) or No (2)");
-			}while(c!=1 || c!=2);
+				System.out.print("-> ");
+                c = Integer.parseInt(scan.nextLine());
+			}while(c<1 || c>2);
 
 		
 		if(c==1) 
@@ -892,15 +938,15 @@ public class Project {
 			Statement st = connection.createStatement();
 			System.out.println(table + " Table:");
 			if(tableNumber == 1) {
-				System.out.printf(" %s  %14s  %8s  %14s \n", "CID", "C_Name", "Age", "Gender");
+				System.out.printf(" %s  %14s  %8s  %14s \n", "C_ID", "C_Name", "Age", "Gender");
 				ResultSet rs = st.executeQuery(query);
 				while (rs.next()) {
-					String CID = rs.getString("C_ID");
+					String C_ID = rs.getString("C_ID");
 					String name = rs.getString("C_NAME");
 					int age = rs.getInt("AGE");
 					String gender = rs.getString("GENDER");
 	
-					System.out.printf("| %10s | %10s | %10d | %10s |\n", CID, name, age, gender);
+					System.out.printf("| %10s | %10s | %10d | %10s |\n", C_ID, name, age, gender);
 				}
 			}
 			else if(tableNumber == 2) {
