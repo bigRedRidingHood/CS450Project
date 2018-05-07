@@ -32,8 +32,6 @@ public class Project {
 	public Project() {
 	}
 
-	// TODO: make password invisible when logging in if we have time
-    // TODO: search database, ie. find reservations and other basic searches
 	public static void main(String arg[]) throws SQLException, ClassNotFoundException {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Please Enter your credentials");
@@ -45,6 +43,7 @@ public class Project {
         getConnection();
 		uploadTables();
 		uploadTuples();
+		uploadTrigger();
 
 		while (Quit) {
 			menu();
@@ -78,7 +77,6 @@ public class Project {
 
     // Select tables for viewing
     // FUNCTION COMPLETE
-    // TODO: Implement option 3 for Searching DB
 	private static void getTables(String prevOp) throws SQLException {
 	    String C_ID = "";
 		if(prevOp.equals("1")) {
@@ -146,7 +144,7 @@ public class Project {
 		}
         else if(prevOp.equals("3")) {
             Scanner scan = new Scanner(System.in);
-            System.out.println("\n\t(1) Search for a reservation\n\t(2) Find Availability\n\t(3) Find Pricing");
+            System.out.println("\n\t(1) Search for a reservation\n\t(2) Find Availability");
             System.out.print("-> ");
             int opt = scan.nextInt();
             switch(opt) {
@@ -157,7 +155,7 @@ public class Project {
                     Statement statement = null;
                     statement = connection.createStatement();
                     StringBuffer sbCreate = new StringBuffer();
-                    sbCreate.append("SELECT C_ID, C_Name, Res_Num FROM Reservation NATURAL JOIN (select C_ID, C_Name from Customer) WHERE C_ID = '" + C_ID + "'");
+                    sbCreate.append("SELECT UNIQUE C_ID, C_Name, Res_Num FROM Reservation NATURAL JOIN (select C_ID, C_Name from Customer) WHERE C_ID = '" + C_ID + "'");
                     System.out.println("\nResult:");
                     try {
                         ResultSet rs = statement.executeQuery(sbCreate.toString());
@@ -169,22 +167,157 @@ public class Project {
                             System.out.printf("| %10s | %10s | %10s |\n", C_ID_, name, Res_Num);
                         }
                     }catch (SQLException e) {
-                        throw e;
+                        System.out.println("\nCan't Execute Query.");
                     }
                     finally {
                         statement.close();
                     }
                     break;
-                    //TODO ADD QUERY HERE
                 case 2: // Availability
-
-                    break;
-                //TODO ADD QUERY HERE
-                case 3: // Pricing
-
+                    System.out.println("\n\t(1) Search by Date\n\t(2) Search by City\n\t(3) Search by Price\n\t(4) Search by Room Type\n\t(5) Search by number of Guests");
+                    System.out.print("-> ");
+                    int num = scan.nextInt();
+                    int mon, day, year;
+                    switch(num) {
+                        case 1:
+                            System.out.print("Month -> ");
+                            mon = scan.nextInt();
+                            System.out.print("Day -> ");
+                            day = scan.nextInt();
+                            System.out.print("Year -> ");
+                            year = scan.nextInt();
+                            Statement statement2 = null;
+                            statement2 = connection.createStatement();
+                            StringBuffer sbCreate2 = new StringBuffer();
+                            sbCreate2.append("SELECT UNIQUE Branch_ID, H_Name, R_Type, Price, Num_Avail FROM Hotel_Room NATURAL JOIN Price_Info WHERE Date_month = " + mon + "AND Date_day = " + day + "AND Date_year = " + year + "AND Num_Avail > 0");
+                            System.out.println("\nResult for "+ day + "/"+ mon + "/" + year);
+                            try {
+                                ResultSet rs = statement2.executeQuery(sbCreate2.toString());
+                                System.out.printf("%s  %13s  %12s  %10s  %10s\n", "H_Name", "Branch_ID", "R_Type", "Price", "Num_Avail");
+                                while (rs.next()) {
+                                    int Branch_ID = rs.getInt("Branch_ID");
+                                    String name = rs.getString("H_Name");
+                                    String R_Type = rs.getString("R_Type");
+                                    int Price = rs.getInt("Price");
+                                    int Num_Avail = rs.getInt("Num_Avail");
+                                    System.out.printf("| %10s | %10d | %10s | %10d | %10d |\n", name, Branch_ID, R_Type, Price, Num_Avail);
+                                }
+                            }catch (SQLException e) {
+                                System.out.println("\nCan't Execute Query.");
+                            }
+                            finally {
+                                statement2.close();
+                            }
+                            break;
+                        case 2:
+                            System.out.print("City -> ");
+                            String City = scan.nextLine();
+                            City = scan.nextLine();
+                            Statement statement3 = null;
+                            statement3 = connection.createStatement();
+                            StringBuffer sbCreate3 = new StringBuffer();
+                            sbCreate3.append("SELECT UNIQUE Branch_ID, H_Name, R_Type, Price, Num_Avail FROM Hotel NATURAL JOIN Price_Info WHERE City = '" + City + "' AND Num_Avail > 0");
+                            System.out.println("\nResult for "+ City);
+                            try {
+                                ResultSet rs = statement3.executeQuery(sbCreate3.toString());
+                                System.out.printf("%s  %13s  %12s  %10s  %10s\n", "H_Name", "Branch_ID", "R_Type", "Price", "Num_Avail");
+                                while (rs.next()) {
+                                    int Branch_ID = rs.getInt("Branch_ID");
+                                    String name = rs.getString("H_Name");
+                                    String R_Type = rs.getString("R_Type");
+                                    int Price = rs.getInt("Price");
+                                    int Num_Avail = rs.getInt("Num_Avail");
+                                    System.out.printf("| %10s | %10d | %10s | %10d | %10d |\n", name, Branch_ID, R_Type, Price, Num_Avail);
+                                }
+                            }catch (SQLException e) {
+                                System.out.println("\nCan't Execute Query.");
+                            }
+                            finally {
+                                statement3.close();
+                            }
+                            break;
+                        case 3:
+                            System.out.print("Budget -> ");
+                            int Price = scan.nextInt();
+                            Statement statement4 = null;
+                            statement4 = connection.createStatement();
+                            StringBuffer sbCreate4 = new StringBuffer();
+                            sbCreate4.append("SELECT UNIQUE Branch_ID, H_Name, R_Type, Price, Num_Avail FROM Hotel_Room NATURAL JOIN Price_Info WHERE Price <= " + Price + " AND Num_Avail > 0");
+                            System.out.println("\nResult for Budget of "+ Price);
+                            try {
+                                ResultSet rs = statement4.executeQuery(sbCreate4.toString());
+                                System.out.printf("%s  %13s  %12s  %10s  %10s\n", "H_Name", "Branch_ID", "R_Type", "Price", "Num_Avail");
+                                while (rs.next()) {
+                                    int Branch_ID = rs.getInt("Branch_ID");
+                                    String name = rs.getString("H_Name");
+                                    String R_Type = rs.getString("R_Type");
+                                    int Price2 = rs.getInt("Price");
+                                    int Num_Avail = rs.getInt("Num_Avail");
+                                    System.out.printf("| %10s | %10d | %10s | %10d | %10d |\n", name, Branch_ID, R_Type, Price2, Num_Avail);
+                                }
+                            }catch (SQLException e) {
+                                System.out.println("\nCan't Execute Query.");
+                            }
+                            finally {
+                                statement4.close();
+                            }
+                            break;
+                        case 4: // Room Type
+                            System.out.print("What type of Room -> ");
+                            String R_Type = scan.nextLine();
+                            R_Type = scan.nextLine();
+                            Statement statement5 = null;
+                            statement5 = connection.createStatement();
+                            StringBuffer sbCreate5 = new StringBuffer();
+                            sbCreate5.append("SELECT UNIQUE Branch_ID, H_Name, R_Type, Price, Num_Avail FROM Price_Info NATURAL JOIN Room WHERE R_Type = '" + R_Type + "' AND Num_Avail > 0");
+                            System.out.println("\nResult for " + R_Type);
+                            try {
+                                ResultSet rs = statement5.executeQuery(sbCreate5.toString());
+                                System.out.printf("%s  %13s  %12s  %10s  %10s\n", "H_Name", "Branch_ID", "R_Type", "Price", "Num_Avail");
+                                while (rs.next()) {
+                                    int Branch_ID = rs.getInt("Branch_ID");
+                                    String name = rs.getString("H_Name");
+                                    String R_Type2 = rs.getString("R_Type");
+                                    int Price2 = rs.getInt("Price");
+                                    int Num_Avail = rs.getInt("Num_Avail");
+                                    System.out.printf("| %10s | %10d | %10s | %10d | %10d |\n", name, Branch_ID, R_Type2, Price2, Num_Avail);
+                                }
+                            }catch (SQLException e) {
+                                System.out.println("\nCan't Execute Query.");
+                            }
+                            finally {
+                                statement5.close();
+                            }
+                            break;
+                        case 5: // Number of Guests
+                            System.out.print("How Many Guests -> ");
+                            int Party_Size = scan.nextInt();
+                            Statement statement6 = null;
+                            statement6 = connection.createStatement();
+                            StringBuffer sbCreate6 = new StringBuffer();
+                            sbCreate6.append("SELECT UNIQUE Branch_ID, H_Name, R_Type, Price, Num_Avail FROM Hotel_Room NATURAL JOIN Room NATURAL JOIN Price_Info WHERE Capacity >= " + Party_Size + " AND Num_Avail > 0");
+                            System.out.println("\nResult for Party of "+ Party_Size);
+                            try {
+                                ResultSet rs = statement6.executeQuery(sbCreate6.toString());
+                                System.out.printf("%s  %13s  %12s  %10s  %10s\n", "H_Name", "Branch_ID", "R_Type", "Price", "Num_Avail");
+                                while (rs.next()) {
+                                    int Branch_ID = rs.getInt("Branch_ID");
+                                    String name = rs.getString("H_Name");
+                                    String R_Type3 = rs.getString("R_Type");
+                                    int Price2 = rs.getInt("Price");
+                                    int Num_Avail = rs.getInt("Num_Avail");
+                                    System.out.printf("| %10s | %10d | %10s | %10d | %10d |\n", name, Branch_ID, R_Type3, Price2, Num_Avail);
+                                }
+                            }catch (SQLException e) {
+                                System.out.println("\nCan't Execute Query.");
+                            }
+                            finally {
+                                statement6.close();
+                            }
+                            break;
+                    }
                     break;
             }
-
         }
 	} // End getTables
 
@@ -217,10 +350,9 @@ public class Project {
             try {
                 StringBuffer sbCreate = new StringBuffer();
                 sbCreate.append("Insert into " + table + " Values(" + query + ")");
-                System.out.println(sbCreate);
                 statement.executeUpdate(sbCreate.toString());
             }catch (SQLException e) {
-                throw e;
+                System.out.println("\nParty Size exceeds Room Capacity!");
             }
             finally {
                 statement.close();
@@ -262,7 +394,7 @@ public class Project {
 				sbCreate2.append("Delete from " + table + " Where " + att + " = '" + info + "'");
 				statement.executeUpdate(sbCreate2.toString());
 			}catch (SQLException e) {
-				throw e;
+                System.out.println("\nCan't Delete Tuple.");
 			}
 			finally {
 				statement.close();
@@ -306,7 +438,7 @@ public class Project {
                 sbCreate.append("UPDATE " + table + " SET " + query + " WHERE " + WHERE);
                 statement.executeUpdate(sbCreate.toString());
             }catch (SQLException e) {
-                throw e;
+                System.out.println("\nCan't Update Tuple.");
             }
             finally {
                 statement.close();
@@ -650,8 +782,8 @@ public class Project {
                     year_out = scan.nextInt();
                     System.out.println("\nYour Check out date: " + month_out + "/" + day_out + "/" + year_out);
                 }
-                while(!H_Name.equals("Hilton") && !H_Name.equals("Hyatt") && !H_Name.equals("HansEtFonz")) {
-                    System.out.println("\nSelect your hotel. (Hilton, Hyatt, HansEtFonz)");
+                while(!H_Name.equals("Hilton") && !H_Name.equals("Hyatt")) {
+                    System.out.println("\nSelect your hotel.");
                     System.out.print("Hotel -> ");
                     String tmp = scan.nextLine();
                     H_Name = scan.nextLine();
@@ -670,15 +802,8 @@ public class Project {
                         Branch_ID = scan.nextInt();
                     }
                 }
-                else if(H_Name.equals("HansEtFonz")) {
-                    while(Branch_ID != 1006 && Branch_ID != 1007 && Branch_ID != 1008) {
-                        System.out.println("\nSelect your Branch. (1006, 1007, 1008)");
-                        System.out.print("Branch ID -> ");
-                        Branch_ID = scan.nextInt();
-                    }
-                }
-                while(!R_Type.equals("King") && !R_Type.equals("Suite") && !R_Type.equals("Queen") && !R_Type.equals("Twin")) {
-                    System.out.println("\nSelect your Room Type. (King, Suite, Queen, Twin)");
+                while(!R_Type.equals("King") && !R_Type.equals("Suite") && !R_Type.equals("Queen") && !R_Type.equals("Twin") && !R_Type.equals("Penthouse")) {
+                    System.out.println("\nSelect your Room Type.");
                     System.out.print("Room Type -> ");
                     String tmp = scan.nextLine();
                     R_Type = scan.nextLine();
@@ -1095,7 +1220,7 @@ public class Project {
         }
 
 		catch (SQLException e) {
-			throw e;
+            System.out.println("\nCan't Upload.");
 		}
 		finally {
 			statement.close();
@@ -1117,7 +1242,7 @@ public class Project {
 			System.out.println("Load from file " + file);
 			while ((line = bufferedReader.readLine()) != null) {
 				StringBuffer sbCreate = new StringBuffer();
-				sbCreate.append(line.toString().replace(';',' '));
+				sbCreate.append(line.replace(';',' '));
 				statement.executeUpdate(sbCreate.toString());
 			}
 			fileReader.close();
@@ -1126,6 +1251,35 @@ public class Project {
 			e.printStackTrace();
 		}
 	}
+
+	private static void uploadTrigger() throws SQLException {
+        Statement statement = null;
+        statement = connection.createStatement();
+
+        try {
+            File file = new File("src/Trigger.sql");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            System.out.println("Read from file " + file);
+            while ((line = bufferedReader.readLine()) != null) {
+                StringBuffer sbCreate = new StringBuffer();
+                sbCreate.append(line);
+                statement.executeUpdate(sbCreate.toString());
+            }
+            fileReader.close();
+        } catch (IOException e) {
+            System.out.println("uploadTrigger Exception here.");
+            e.printStackTrace();
+        }
+
+        catch (SQLException e) {
+            System.out.println("\nCan't Upload.");
+        }
+        finally {
+            statement.close();
+        }
+    }
 
 	// Close the Connection
 	// FUNCTION COMPLETE
